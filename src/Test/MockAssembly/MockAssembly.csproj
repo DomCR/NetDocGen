@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Description>Hello this is a description</Description>
+	</PropertyGroup>
+
+	<Target Name="CopyXml" AfterTargets="Build" Condition="Exists('$(SolutionDir)..\local')">
+		<Copy SourceFiles="$(ProjectDir)obj\Debug\net6.0\MockAssembly.xml" DestinationFolder="$(SolutionDir)..\local" />
+	</Target>
+
+</Project>
