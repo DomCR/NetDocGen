@@ -35,7 +35,10 @@ namespace NetDocGen.Pages
 
 		protected virtual string createFilePath()
 		{
-			return Path.Combine(outputFolder, $"{this.title}.md");
+			string filename = $"{this.title}.md";
+			filename = string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+
+			return Path.Combine(outputFolder, filename);
 		}
 	}
 }

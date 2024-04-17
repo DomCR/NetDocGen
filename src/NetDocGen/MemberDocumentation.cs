@@ -24,10 +24,10 @@ namespace NetDocGen
 		public MemberDocumentation(T info)
 		{
 			this._info = info;
-			this.Name = $"{this._info.Name}";
+			this.Name = this.removeInvalidCharacters($"{this._info.Name}");
 
 			if (this._info.DeclaringType != null)
-				this.FullName = $"{this._info.DeclaringType.FullName}.{this._info.Name}";
+				this.FullName = $"{this._info.DeclaringType.FullName}.{this.Name}";
 		}
 
 		public MemberDocumentation(T info, R owner) : this(info)
@@ -38,6 +38,11 @@ namespace NetDocGen
 		public override AssemblyDocumentation GetRoot()
 		{
 			return this.Owner?.GetRoot();
+		}
+
+		private string removeInvalidCharacters(string name)
+		{
+			return name.Replace("`1", "<T>");
 		}
 	}
 }

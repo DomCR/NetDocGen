@@ -28,6 +28,8 @@ namespace NetDocGen.Pages
 					TypePage tpage = new TypePage(t, outputFolder);
 					tpage.Create();
 				}
+
+				this.builder.AppendLine();
 			}
 		}
 	}

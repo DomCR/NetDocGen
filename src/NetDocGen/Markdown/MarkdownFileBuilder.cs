@@ -74,7 +74,7 @@ namespace NetDocGen.Markdown
 		public void Link(string text, string url)
 		{
 			this._sb.Append("[");
-			this._sb.Append(text);
+			this._sb.Append(this.process(text));
 			this._sb.Append("]");
 			this._sb.Append("(");
 			this._sb.Append(url);
@@ -193,6 +193,18 @@ namespace NetDocGen.Markdown
 		public override string ToString()
 		{
 			return this._sb.ToString();
+		}
+
+		private string process(string text)
+		{
+			if (text == null) return "";
+			text = text.Replace("<", "\\<");
+			text = text.Replace(">", "\\>");
+			text = text.Replace("&gt;", ">");
+			text = text.Replace("&lt;", "<");
+			text = text.Replace("|", "\\|");
+			text = text.Replace(Environment.NewLine, "<br>");
+			return text.Replace("\n", "<br>");
 		}
 
 		private string getStylePrefix(MarkdownTextStyle style)
