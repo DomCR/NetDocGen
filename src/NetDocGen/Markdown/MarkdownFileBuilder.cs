@@ -71,6 +71,19 @@ namespace NetDocGen.Markdown
 			this._sb.AppendLine();
 		}
 
+		public void Header(int level, string text, string url)
+		{
+			for (int i = 0; i < level; i++)
+			{
+				this._sb.Append("#");
+			}
+
+			this._sb.Append(" ");
+			this.Link(text, url);
+			this._sb.AppendLine();
+			this._sb.AppendLine();
+		}
+
 		public void Link(string text, string url)
 		{
 			this._sb.Append("[");
