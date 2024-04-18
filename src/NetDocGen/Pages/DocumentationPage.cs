@@ -9,15 +9,16 @@ namespace NetDocGen.Pages
 {
 	public abstract class DocumentationPage
 	{
+		public string OutputFolder { get; protected set; }
+
 		protected readonly MarkdownFileBuilder builder;
 
 		protected readonly string title;
-		protected readonly string outputFolder;
 
 		protected DocumentationPage(string title, string outputFolder)
 		{
 			this.title = title;
-			this.outputFolder = outputFolder;
+			this.OutputFolder = outputFolder;
 
 			builder = new MarkdownFileBuilder();
 		}
@@ -38,7 +39,7 @@ namespace NetDocGen.Pages
 			string filename = $"{this.title}.md";
 			filename = string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
 
-			return Path.Combine(outputFolder, filename);
+			return Path.Combine(OutputFolder, filename);
 		}
 	}
 }

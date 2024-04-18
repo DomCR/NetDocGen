@@ -7,6 +7,8 @@ namespace NetDocGen.Xml
 {
 	public class XmlParser : IDisposable
 	{
+		public bool UnIndentText { get; set; } = true;
+
 		[Obsolete]
 		public Assembly Assembly { get; private set; }
 
@@ -72,7 +74,7 @@ namespace NetDocGen.Xml
 
 		public AssemblyDocumentation ParseAssembly(Assembly assembly)
 		{
-			AssemblyDocumentation documentation = new AssemblyDocumentation(assembly);
+			AssemblyDocumentation documentation = new AssemblyDocumentation(Path.GetFileNameWithoutExtension(assembly.Location));
 
 			foreach (Type t in assembly.ExportedTypes)
 			{
@@ -93,7 +95,7 @@ namespace NetDocGen.Xml
 		{
 			foreach (NamespaceDocumentation ns in documentation.Namespaces)
 			{
-
+				
 			}
 		}
 
@@ -237,7 +239,24 @@ namespace NetDocGen.Xml
 
 		private string getXmlText(XPathNavigator node)
 		{
-			return node?.InnerXml ?? string.Empty;
+			var innerText = node?.InnerXml ?? string.Empty;
+			if (!UnIndentText || string.IsNullOrEmpty(innerText)) return innerText;
+
+			var outerText = node?.OuterXml ?? string.Empty;
+			var indentText = findIndent(outerText);
+			if (string.IsNullOrEmpty(indentText)) return innerText;
+			return innerText.Replace(indentText, indentText[0].ToString()).Trim('\r', '\n');
+		}
+
+		private string findIndent(string outerText)
+		{
+			if (string.IsNullOrEmpty(outerText)) return string.Empty;
+			var end = outerText.LastIndexOf("</");
+			if (end < 0) return string.Empty;
+			var start = end - 1;
+			for (; start >= 0 && outerText[start] != '\r' && outerText[start] != '\n'; start--) ;
+			if (start < 0 || end <= start) return string.Empty;
+			return outerText.Substring(start, end - start);
 		}
 	}
 }

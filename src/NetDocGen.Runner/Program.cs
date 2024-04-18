@@ -22,14 +22,25 @@ namespace NetDocGen.Runner
 
 			AssemblyDocumentation doc;
 
-#if true
+#if false
 			doc = new AssemblyDocumentation(Assembly.LoadFrom(acadPath));
 #else
 			using (XmlParser parser = new XmlParser(acadXmlPath))
 			{
-				doc = parser.ParseAssembly();
+				doc = parser.ParseAssembly(Assembly.LoadFrom(acadPath));
 			}
 #endif
+			System.IO.DirectoryInfo di = new DirectoryInfo(outputFolder);
+
+			foreach (FileInfo file in di.GetFiles())
+			{
+				file.Delete();
+			}
+			foreach (DirectoryInfo dir in di.GetDirectories())
+			{
+				dir.Delete(true);
+			}
+
 			MarkDownGenerator generator = new MarkDownGenerator(outputFolder);
 			generator.Generate(doc);
 

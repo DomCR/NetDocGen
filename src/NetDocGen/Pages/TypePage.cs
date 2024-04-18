@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NetDocGen.Pages
+﻿namespace NetDocGen.Pages
 {
 	public class TypePage : DocumentationPage
 	{
@@ -19,24 +13,30 @@ namespace NetDocGen.Pages
 		{
 			builder.AppendLine(_documentation.Summary);
 
-			builder.Header(2, "Properties");
+			buildDataTable("Properties", this._documentation.Properties);
+			buildDataTable("Methods", this._documentation.Methods);
+		}
 
-			List<List<string>> properties = new();
-			foreach (var item in _documentation.Properties)
+		private void buildDataTable(string title, IEnumerable<CommonDocumentation> data)
+		{
+			builder.Header(2, title);
+
+			string[] cols = new string[] { "Name", "Summary" };
+
+			List<List<string>> rows = new();
+			foreach (CommonDocumentation item in data)
 			{
-				List<string> cols = new()
+				rows.Add(new List<string>()
 				{
 					item.Name,
 					item.Summary
-				};
-
-				properties.Add(cols);
+				});
 			}
 
 			builder.Table(
-				new string[] { "Name", "Summary" }, 
+				cols,
 				alignment: new string[] { ":-", ":-" },
-				items: properties);
+				items: rows);
 		}
 	}
 }

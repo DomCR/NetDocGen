@@ -66,8 +66,6 @@ namespace NetDocGen
 		{
 			foreach (Type t in this._assembly.ExportedTypes)
 			{
-
-
 				if (t.IsNested)
 				{
 					continue;
