@@ -41,8 +41,8 @@ namespace NetDocGen.Runner
 				dir.Delete(true);
 			}
 
-			MarkDownGenerator generator = new MarkDownGenerator(outputFolder);
-			generator.Generate(doc);
+			MarkDownWikiGenerator generator = new MarkDownWikiGenerator(doc, outputFolder);
+			generator.Generate();
 
 			Console.WriteLine("PROGRAM END");
 		}

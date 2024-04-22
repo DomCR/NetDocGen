@@ -9,6 +9,8 @@ namespace NetDocGen
 
 		public override string FullName { get { return this.Name; } }
 
+		public string Version { get; }
+
 		public IEnumerable<NamespaceDocumentation> Namespaces
 		{
 			get
@@ -21,16 +23,13 @@ namespace NetDocGen
 
 		private readonly Dictionary<string, NamespaceDocumentation> _namespaces = new();
 
-		public AssemblyDocumentation(string name)
-		{
-			this.Name = name;
-		}
-
 		public AssemblyDocumentation(Assembly assembly)
 		{
 			this._assembly = assembly;
 
-			this.Name = Path.GetFileNameWithoutExtension(assembly.Location);
+			this.Version = this._assembly.GetName().Version.ToString();
+			this.Name = Path.GetFileNameWithoutExtension(this._assembly.Location);
+
 			this.processAssembly();
 		}
 

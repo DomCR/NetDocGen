@@ -9,14 +9,11 @@ namespace NetDocGen.Xml
 	{
 		public bool UnIndentText { get; set; } = true;
 
-		[Obsolete]
-		public Assembly Assembly { get; private set; }
-
 		private readonly XPathNavigator _nav;
 
 		// XML XPat
-		private const string assemblyXPath = "/doc/assembly";
-		private const string membersXPath = "/doc/members/member";
+		private const string _assemblyXPath = "/doc/assembly";
+		private const string _membersXPath = "/doc/members/member";
 		private const string _memberXPath = "/doc/members/member[@name='{0}']";
 		private const string _summaryXPath = "summary";
 		private const string _remarksXPath = "remarks";
@@ -28,7 +25,7 @@ namespace NetDocGen.Xml
 		private const string _inheritdocXPath = "inheritdoc";
 
 		//  XML attributes 
-		private const string nameAttribute = "name";
+		private const string _nameAttribute = "name";
 		private const string _codeAttribute = "code";
 		private const string _crefAttribute = "cref";
 
@@ -41,40 +38,9 @@ namespace NetDocGen.Xml
 			this._nav = new XPathDocument(path, XmlSpace.Preserve).CreateNavigator();
 		}
 
-		public AssemblyDocumentation ParseAssembly()
-		{
-			XPathNavigator root = this._nav.SelectSingleNode(assemblyXPath);
-			var documentation = new AssemblyDocumentation(root.SelectSingleNode(nameAttribute).InnerXml);
-
-			parseXmlTypes(documentation);
-
-			return documentation;
-		}
-
-		private void parseXmlTypes(AssemblyDocumentation documentation)
-		{
-			HashSet<string> ids = new HashSet<string>();
-
-			XPathNodeIterator types = this._nav.Select($"/doc/members/member[@name[contains(.,'T:')]]");
-
-			IEnumerable<XPathNavigator> sorted =
-				 from XPathNavigator nav in types
-				 orderby nav.GetAttribute("name", string.Empty)
-				 select nav;
-
-			foreach (XPathNavigator m in sorted)
-			{
-				string value = m.GetAttribute("name", string.Empty);
-				char prefix = value.Split(":").First()[0];
-				string fullname = value.Split(":").Last();
-
-				Console.WriteLine(fullname);
-			}
-		}
-
 		public AssemblyDocumentation ParseAssembly(Assembly assembly)
 		{
-			AssemblyDocumentation documentation = new AssemblyDocumentation(Path.GetFileNameWithoutExtension(assembly.Location));
+			AssemblyDocumentation documentation = new AssemblyDocumentation(assembly);
 
 			foreach (Type t in assembly.ExportedTypes)
 			{
