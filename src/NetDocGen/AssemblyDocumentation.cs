@@ -76,6 +76,16 @@ namespace NetDocGen
 					this._namespaces.Add(t.Namespace, ns);
 				}
 
+				if (t.IsEnum)
+				{
+
+				}
+
+				if (t.IsInterface)
+				{
+
+				}
+
 				TypeDocumentation tdoc = new(t, ns);
 				ns.Types.Add(tdoc);
 			}

@@ -86,12 +86,21 @@ namespace NetDocGen.Markdown
 
 		public void Link(string text, string url)
 		{
-			this._sb.Append("[");
-			this._sb.Append(this.process(text));
-			this._sb.Append("]");
-			this._sb.Append("(");
-			this._sb.Append(url);
-			this._sb.Append(")");
+			this._sb.Append(LinkString(text, url));
+		}
+
+		public static string LinkString(string text, string url)
+		{
+			StringBuilder strbuilder = new StringBuilder();
+
+			strbuilder.Append("[");
+			strbuilder.Append(process(text));
+			strbuilder.Append("]");
+			strbuilder.Append("(");
+			strbuilder.Append(url);
+			strbuilder.Append(")");
+
+			return strbuilder.ToString();
 		}
 
 		public void Image(string altText, string imageUrl)
@@ -208,7 +217,7 @@ namespace NetDocGen.Markdown
 			return this._sb.ToString();
 		}
 
-		private string process(string text)
+		private static string process(string text)
 		{
 			if (text == null) return "";
 			text = text.Replace("<", "\\<");

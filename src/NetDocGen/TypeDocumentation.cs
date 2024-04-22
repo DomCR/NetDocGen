@@ -23,13 +23,13 @@ namespace NetDocGen
 
 		public TypeDocumentation(Type type, NamespaceDocumentation owner) : base(type, owner)
 		{
-			this.FullName = type.FullName;
+			this.FullName = this.removeInvalidCharacters(type.FullName);
 			this.processMembers();
 		}
 
 		private void processMembers()
 		{
-			foreach (MethodInfo m in _info.GetMethods(BindingFlags.Public
+			foreach (MethodInfo m in ReflectionInfo.GetMethods(BindingFlags.Public
 											| BindingFlags.Instance
 											| BindingFlags.DeclaredOnly))
 			{
@@ -40,7 +40,7 @@ namespace NetDocGen
 				this.Methods.Add(mdoc);
 			}
 
-			foreach (PropertyInfo p in _info.GetProperties(BindingFlags.Public
+			foreach (PropertyInfo p in ReflectionInfo.GetProperties(BindingFlags.Public
 														| BindingFlags.Instance
 														| BindingFlags.DeclaredOnly))
 			{
@@ -48,11 +48,10 @@ namespace NetDocGen
 				this.Properties.Add(pdoc);
 			}
 
-			foreach (var item in _info.GetNestedTypes(BindingFlags.Public
+			foreach (var item in ReflectionInfo.GetNestedTypes(BindingFlags.Public
 														| BindingFlags.Instance
 														| BindingFlags.DeclaredOnly))
 			{
-
 			}
 		}
 	}

@@ -1,9 +1,5 @@
 ﻿using NetDocGen.Markdown;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using NetDocGen.Utils;
 
 namespace NetDocGen.Pages
 {
@@ -11,13 +7,14 @@ namespace NetDocGen.Pages
 	{
 		public string OutputFolder { get; protected set; }
 
+		protected abstract string title { get; }
+
+		protected abstract string fileName { get; }
+
 		protected readonly MarkdownFileBuilder builder;
 
-		protected readonly string title;
-
-		protected DocumentationPage(string title, string outputFolder)
+		protected DocumentationPage(string outputFolder)
 		{
-			this.title = title;
 			this.OutputFolder = outputFolder;
 
 			builder = new MarkdownFileBuilder();
@@ -36,10 +33,44 @@ namespace NetDocGen.Pages
 
 		protected virtual string createFilePath()
 		{
-			string filename = $"{this.title}.md";
-			filename = string.Join("_", filename.Split(Path.GetInvalidFileNameChars()));
+			string file = this.fileName;
 
-			return Path.Combine(OutputFolder, filename);
+			if (!Path.HasExtension(file))
+			{
+				file = $"{fileName}.md";
+			}
+
+			return Path.Combine(OutputFolder, file);
+		}
+
+		protected void buildDataTable(int level, string title, IEnumerable<CommonDocumentation> data, bool linkName = false)
+		{
+			if (!data.Any())
+			{
+				return;
+			}
+
+			builder.Header(level, title);
+
+			string[] cols = new string[] { "Name", "Summary" };
+
+			List<List<string>> rows = new();
+			foreach (CommonDocumentation item in data)
+			{
+				string name = linkName ?
+					MarkdownFileBuilder.LinkString(item.Name, PathUtils.ToLink(item.FullName)) : item.Name;
+
+				rows.Add(new List<string>()
+				{
+					name,
+					item.Summary
+				});
+			}
+
+			builder.Table(
+				cols,
+				alignment: new string[] { ":-", ":-" },
+				items: rows);
 		}
 	}
 }

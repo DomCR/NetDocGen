@@ -9,9 +9,9 @@ namespace NetDocGen.Services
 
 		private readonly AssemblyDocumentation _documentation;
 
-		private MarkdownFileBuilder _sidebarBuilder = new();
+		private readonly MarkdownFileBuilder _sidebarBuilder = new();
 
-		private MarkdownFileBuilder _footerBuilder = new();
+		private readonly MarkdownFileBuilder _footerBuilder = new();
 
 		public MarkDownWikiGenerator(AssemblyDocumentation documentation, string outputFolder)
 		{
@@ -32,7 +32,7 @@ namespace NetDocGen.Services
 			File.WriteAllText(path, this._footerBuilder.ToString());
 		}
 
-		private void createPages( )
+		private void createPages()
 		{
 			AssemblyPage assemblyPage = new AssemblyPage(_documentation, OutputFolder);
 			assemblyPage.Create();

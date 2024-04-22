@@ -42,16 +42,12 @@ namespace NetDocGen.Xml
 		{
 			AssemblyDocumentation documentation = new AssemblyDocumentation(assembly);
 
-			foreach (Type t in assembly.ExportedTypes)
+			foreach (NamespaceDocumentation ns in documentation.Namespaces)
 			{
-				if (!documentation.TryGetNamespace(t.Namespace, out NamespaceDocumentation ns))
+				foreach (TypeDocumentation t in ns.Types)
 				{
-					ns = new NamespaceDocumentation(t.Namespace, documentation);
-					documentation.AddNamespace(ns);
+					this.parseType(t.ReflectionInfo, t);
 				}
-
-				TypeDocumentation tdoc = this.parseType(t, ns);
-				ns.Types.Add(tdoc);
 			}
 
 			return documentation;
@@ -61,7 +57,7 @@ namespace NetDocGen.Xml
 		{
 			foreach (NamespaceDocumentation ns in documentation.Namespaces)
 			{
-				
+
 			}
 		}
 
@@ -112,7 +108,9 @@ namespace NetDocGen.Xml
 
 		public TypeDocumentation ParseType(Type type)
 		{
-			return this.parseType(type, null);
+			TypeDocumentation tdoc = new TypeDocumentation(type);
+			this.parseType(type, tdoc);
+			return tdoc;
 		}
 
 		/// <inheritdoc/>
@@ -120,33 +118,19 @@ namespace NetDocGen.Xml
 		{
 		}
 
-		private TypeDocumentation parseType(Type type, NamespaceDocumentation parent)
+		private void parseType(Type type, TypeDocumentation tdoc)
 		{
-			TypeDocumentation tdoc = new TypeDocumentation(type, parent);
 			this.getComments(type, tdoc);
 
-			foreach (MethodInfo m in type.GetMethods(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
+			foreach (MethodDocumentation mdoc in tdoc.Methods)
 			{
-				if (m.IsSpecialName)
-					continue;
-
-				MethodDocumentation mdoc = new MethodDocumentation(m, tdoc);
-				this.getComments(m, mdoc);
-				tdoc.Methods.Add(mdoc);
+				this.getComments(mdoc.ReflectionInfo, mdoc);
 			}
 
-			foreach (PropertyInfo p in type.GetProperties(BindingFlags.Public
-														| BindingFlags.Instance
-														| BindingFlags.DeclaredOnly))
+			foreach (PropertyDocumentation pdoc in tdoc.Properties)
 			{
-				PropertyDocumentation pdoc = new PropertyDocumentation(p, tdoc);
-				this.getComments(p, pdoc);
-				tdoc.Properties.Add(pdoc);
+				this.getComments(pdoc.ReflectionInfo, pdoc);
 			}
-
-			return tdoc;
 		}
 
 		private string getNodePath(string name)

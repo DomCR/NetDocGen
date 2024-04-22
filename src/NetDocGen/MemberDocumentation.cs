@@ -9,25 +9,30 @@ namespace NetDocGen
 	{
 		public override string Name { get; }
 
-		public override string FullName { get; }
+		public override string FullName { get { return this._fullName; } }
 
 		public R Owner { get; }
 
-		protected T _info;
+		public T ReflectionInfo { get; }
+
+		protected string _fullName;
 
 		public MemberDocumentation(string fullname)
 		{
-			this.FullName = fullname;
+			this._fullName = fullname;
 			this.Name = fullname.Split('.').Last();
 		}
 
 		public MemberDocumentation(T info)
 		{
-			this._info = info;
-			this.Name = this.removeInvalidCharacters($"{this._info.Name}");
+			this.ReflectionInfo = info;
+			this.Name = this.removeInvalidCharacters(this.ReflectionInfo.Name);
 
-			if (this._info.DeclaringType != null)
-				this.FullName = $"{this._info.DeclaringType.FullName}.{this.Name}";
+			if (this.ReflectionInfo.DeclaringType != null)
+			{
+				string fname = $"{this.ReflectionInfo.DeclaringType.FullName}.{this.Name}";
+				this._fullName = this.removeInvalidCharacters(fname);
+			}
 		}
 
 		public MemberDocumentation(T info, R owner) : this(info)
@@ -40,7 +45,7 @@ namespace NetDocGen
 			return this.Owner?.GetRoot();
 		}
 
-		private string removeInvalidCharacters(string name)
+		protected string removeInvalidCharacters(string name)
 		{
 			return name.Replace("`1", "<T>");
 		}
