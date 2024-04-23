@@ -17,12 +17,14 @@
 		{
 			this.builder.AppendLine($"{_documentation.Name} {_documentation.Version} Library");
 
+			this.builder.AppendLine(_documentation.Summary);
+
 			this.builder.Header(2, $"Namespaces");
 
 			foreach (NamespaceDocumentation ns in this._documentation.Namespaces.OrderBy(n => n.FullName))
 			{
 				NamespacePage nsPage = new NamespacePage(ns, OutputFolder);
-				nsPage.Create();
+				nsPage.CreateFile();
 
 				this.builder.Header(2, $"{ns.FullName} Namespace", ns.FullName);
 

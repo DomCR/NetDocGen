@@ -1,5 +1,6 @@
 ﻿using NetDocGen.Markdown;
 using NetDocGen.Utils;
+using System.Text;
 
 namespace NetDocGen.Pages
 {
@@ -20,13 +21,24 @@ namespace NetDocGen.Pages
 			builder = new MarkdownFileBuilder();
 		}
 
-		public void Create()
+		public void CreateFile()
 		{
+			var sb = new StringBuilder();
+
+			this.CreateIn(sb);
+
+			File.WriteAllText(this.createFilePath(), sb.ToString());
+		}
+
+		public void CreateIn(StringBuilder output)
+		{
+			this.builder.Clear();
+
 			this.builder.Header(1, this.title);
 
 			this.build();
 
-			File.WriteAllText(this.createFilePath(), this.builder.ToString());
+			output.Append(this.builder.ToString());
 		}
 
 		protected virtual void build() { }
@@ -35,7 +47,7 @@ namespace NetDocGen.Pages
 		{
 			string file = this.fileName;
 
-			if (!Path.HasExtension(file))
+			if (Path.GetExtension(file) != "md")
 			{
 				file = $"{fileName}.md";
 			}

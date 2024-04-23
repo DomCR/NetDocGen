@@ -20,7 +20,7 @@ namespace NetDocGen.Pages
 			foreach (TypeDocumentation t in _documentation.Types.OrderBy(t => t.Name))
 			{
 				TypePage tpage = new TypePage(t, OutputFolder);
-				tpage.Create();
+				tpage.CreateFile();
 			}
 
 			this.buildDataTable(2, "Classes", _documentation.Types.OrderBy(t => t.Name), true);

@@ -1,5 +1,6 @@
 ﻿using NetDocGen.Xml;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace NetDocGen
 {
@@ -9,7 +10,7 @@ namespace NetDocGen
 
 		public override string FullName { get { return this.Name; } }
 
-		public string Version { get; }
+		public string Version { get; private set; }
 
 		public IEnumerable<NamespaceDocumentation> Namespaces
 		{
@@ -29,6 +30,9 @@ namespace NetDocGen
 
 			this.Version = this._assembly.GetName().Version.ToString();
 			this.Name = Path.GetFileNameWithoutExtension(this._assembly.Location);
+
+			this.Summary = this._assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
+			//this.Version = this._assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
 			this.processAssembly();
 		}

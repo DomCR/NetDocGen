@@ -35,15 +35,14 @@ namespace NetDocGen.Services
 		private void createPages()
 		{
 			AssemblyPage assemblyPage = new AssemblyPage(_documentation, OutputFolder);
-			assemblyPage.Create();
+			assemblyPage.CreateFile();
 		}
 
 		private void createSidebar()
 		{
 			foreach (NamespaceDocumentation ns in this._documentation.Namespaces.OrderBy(n => n.FullName))
 			{
-				this._sidebarBuilder.Link(ns.FullName, ns.FullName);
-				this._sidebarBuilder.AppendLine();
+				this._sidebarBuilder.ListLink(ns.FullName, ns.FullName);
 			}
 
 			string path = Path.Combine(OutputFolder, "_Sidebar.md");

@@ -53,6 +53,7 @@ namespace NetDocGen.Markdown
 		public void AppendLine(string text)
 		{
 			this._sb.AppendLine(text);
+			this._sb.AppendLine();
 		}
 
 		public void AppendLine(string text, MarkdownTextStyle style)
@@ -210,6 +211,11 @@ namespace NetDocGen.Markdown
 		{
 			this._sb.AppendLine("</details>");
 			this._sb.AppendLine("");
+		}
+
+		public void Clear()
+		{
+			this._sb.Clear();
 		}
 
 		public override string ToString()
