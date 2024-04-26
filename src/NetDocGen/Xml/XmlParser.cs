@@ -42,13 +42,7 @@ namespace NetDocGen.Xml
 		{
 			AssemblyDocumentation documentation = new AssemblyDocumentation(assembly);
 
-			foreach (NamespaceDocumentation ns in documentation.Namespaces)
-			{
-				foreach (TypeDocumentation t in ns.Types)
-				{
-					this.parseType(t.ReflectionInfo, t);
-				}
-			}
+			ParseAssembly(documentation);
 
 			return documentation;
 		}
@@ -57,7 +51,10 @@ namespace NetDocGen.Xml
 		{
 			foreach (NamespaceDocumentation ns in documentation.Namespaces)
 			{
-
+				foreach (TypeDocumentation t in ns.Types)
+				{
+					this.parseType(t.ReflectionInfo, t);
+				}
 			}
 		}
 

@@ -2,6 +2,6 @@
 {
 	public interface IMarkDownGenerator
 	{
-		void Generate();
+		void Generate(AssemblyDocumentation documentation, string outputFolder);
 	}
 }

@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using NetDocGen.Markdown;
+﻿using McMaster.Extensions.CommandLineUtils;
+using Microsoft.Extensions.DependencyInjection;
+using NetDocGen.Runner.Commands;
 using NetDocGen.Services;
 using NetDocGen.Xml;
 using System.Reflection;
@@ -14,24 +15,37 @@ namespace NetDocGen.Runner
 		const string acadPath = "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.dll";
 		const string acadXmlPath = "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.xml";
 
-		static void Main(string[] args)
+		static int Main(string[] args)
 		{
-			ServiceCollection services = new ServiceCollection();
-			services.RegisterDependencies();
-			services.BuildServiceProvider();
+			try
+			{
+				var services = new ServiceCollection()
+				.RegisterDependencies()
+				.BuildServiceProvider();
+
+				using (var cli = new CommandLineApplication<MarkdownWikiCommand>())
+				{
+					cli.Conventions.UseDefaultConventions()
+						.UseConstructorInjection(services);
+
+					return cli.Execute(args);
+				}
+			}
+			catch (Exception ex)
+			{
+
+				throw;
+			}
+
 
 			AssemblyDocumentation doc;
 
-#if false
-			doc = new AssemblyDocumentation(Assembly.LoadFrom(acadPath));
-#else
 			using (XmlParser parser = new XmlParser(acadXmlPath))
 			{
 				doc = parser.ParseAssembly(Assembly.LoadFrom(acadPath));
 			}
-#endif
-			System.IO.DirectoryInfo di = new DirectoryInfo(outputFolder);
 
+			System.IO.DirectoryInfo di = new DirectoryInfo(outputFolder);
 			foreach (FileInfo file in di.GetFiles())
 			{
 				file.Delete();
@@ -41,10 +55,12 @@ namespace NetDocGen.Runner
 				dir.Delete(true);
 			}
 
-			MarkDownWikiGenerator generator = new MarkDownWikiGenerator(doc, outputFolder);
-			generator.Generate();
-
 			Console.WriteLine("PROGRAM END");
 		}
+	}
+
+	public class Configuration
+	{
+		public string Output { get; set; }
 	}
 }

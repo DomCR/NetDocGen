@@ -5,47 +5,42 @@ namespace NetDocGen.Services
 {
 	public class MarkDownWikiGenerator : IMarkDownGenerator
 	{
-		public string OutputFolder { get; }
-
-		private readonly AssemblyDocumentation _documentation;
-
 		private readonly MarkdownFileBuilder _sidebarBuilder = new();
 
 		private readonly MarkdownFileBuilder _footerBuilder = new();
 
-		public MarkDownWikiGenerator(AssemblyDocumentation documentation, string outputFolder)
+		public void Generate(AssemblyDocumentation documentation, string outputFolder)
 		{
-			this.OutputFolder = outputFolder;
-			this._documentation = documentation;
+			if (!Directory.Exists(outputFolder))
+			{
+				Directory.CreateDirectory(outputFolder);
+			}
+
+			this.createSidebar(documentation, outputFolder);
+			this.creatFooter(outputFolder);
+			this.createPages(documentation, outputFolder);
 		}
 
-		public void Generate()
+		private void creatFooter(string outputFolder)
 		{
-			this.createSidebar();
-			this.creatFooter();
-			this.createPages();
-		}
-
-		private void creatFooter()
-		{
-			string path = Path.Combine(OutputFolder, "_Footer.md");
+			string path = Path.Combine(outputFolder, "_Footer.md");
 			File.WriteAllText(path, this._footerBuilder.ToString());
 		}
 
-		private void createPages()
+		private void createPages(AssemblyDocumentation documentation, string outputFolder)
 		{
-			AssemblyPage assemblyPage = new AssemblyPage(_documentation, OutputFolder);
+			AssemblyPage assemblyPage = new AssemblyPage(documentation, outputFolder);
 			assemblyPage.CreateFile();
 		}
 
-		private void createSidebar()
+		private void createSidebar(AssemblyDocumentation documentation, string outputFolder)
 		{
-			foreach (NamespaceDocumentation ns in this._documentation.Namespaces.OrderBy(n => n.FullName))
+			foreach (NamespaceDocumentation ns in documentation.Namespaces.OrderBy(n => n.FullName))
 			{
 				this._sidebarBuilder.ListLink(ns.FullName, ns.FullName);
 			}
 
-			string path = Path.Combine(OutputFolder, "_Sidebar.md");
+			string path = Path.Combine(outputFolder, "_Sidebar.md");
 			File.WriteAllText(path, this._sidebarBuilder.ToString());
 		}
 	}
