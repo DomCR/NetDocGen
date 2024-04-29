@@ -1,6 +1,6 @@
 ﻿namespace NetDocGen.Services
 {
-	public interface IMarkDownGenerator
+	public interface IMarkDownWikiGenerator
 	{
 		void Generate(AssemblyDocumentation documentation, string outputFolder);
 	}

@@ -3,7 +3,7 @@ using NetDocGen.Pages;
 
 namespace NetDocGen.Services
 {
-	public class MarkDownWikiGenerator : IMarkDownGenerator
+	public class MarkDownWikiGenerator : IMarkDownWikiGenerator
 	{
 		private readonly MarkdownFileBuilder _sidebarBuilder = new();
 

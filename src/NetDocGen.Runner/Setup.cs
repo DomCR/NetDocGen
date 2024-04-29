@@ -7,7 +7,7 @@ namespace NetDocGen.Runner
 	{
 		public static IServiceCollection RegisterDependencies(this IServiceCollection serviceCollection)
 		{
-			return serviceCollection.AddTransient<IMarkDownGenerator, MarkDownWikiGenerator>();
+			return serviceCollection.AddTransient<IMarkDownWikiGenerator, MarkDownWikiGenerator>();
 		}
 	}
 }

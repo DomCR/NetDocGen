@@ -1,8 +1,16 @@
 {
   "profiles": {
-    "Debug": {
+    "Arguments": {
       "commandName": "Project",
       "commandLineArgs": "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.dll -o ..\\..\\..\\..\\..\\local\\output\\ACadSharp -c"
+    },
+    "Env variables": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "INPUT": "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.dll",
+        "OUTPUT": "..\\..\\..\\..\\..\\local\\output\\ACadSharp",
+        "CLEAR_OUTPUT_DIRECTORY": "true"
+      }
     }
   }
 }

@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities\CSUtilities.shproj", "{40DD6727-A582-48F2-81EF-5B7ACA272C79}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDocGen.Tests", "NetDocGen.Tests\NetDocGen.Tests.csproj", "{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Coverage|Any CPU = Coverage|Any CPU
@@ -54,6 +56,12 @@ Global
 		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Coverage|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Coverage|Any CPU.Build.0 = Debug|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +70,7 @@ Global
 		{551F6C53-6F6D-4A1D-896F-56216C99C216} = {2EF8ADE1-C2A8-466F-9871-ABC2F73C8911}
 		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A} = {94D7B2F4-91D4-4BE3-BF1A-C48DA4F7993B}
 		{40DD6727-A582-48F2-81EF-5B7ACA272C79} = {DABF27A9-2B6F-4AAC-8CE2-516058A2C925}
+		{EAA73186-95CB-40A7-8B71-E16C8C98AAC9} = {94D7B2F4-91D4-4BE3-BF1A-C48DA4F7993B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36720E54-DFF0-4A4B-9F0E-4CA15FF49487}
