@@ -5,6 +5,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
-	<Import Project="..\..\..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
+	<Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
 
 </Project>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
@@ -8,8 +8,12 @@
 
 	<PropertyGroup>
 		<PackageId>NetDocGen.Runner</PackageId>
-		<Version>1.0.0</Version>
+		<Authors>DomCr</Authors>
+		<Version>0.0.1</Version>
 		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/DomCR/NetDocGen</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright>Copyright (c) 2024 Albert Domenech</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup>

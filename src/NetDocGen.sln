@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MockAssembly", "Test\MockAs
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{DABF27A9-2B6F-4AAC-8CE2-516058A2C925}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "..\..\CSUtilities\CSUtilities\CSUtilities.shproj", "{18355BD0-D0A5-4B7A-AB1F-785B6CB1EDB6}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities\CSUtilities.shproj", "{40DD6727-A582-48F2-81EF-5B7ACA272C79}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,13 +61,13 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{551F6C53-6F6D-4A1D-896F-56216C99C216} = {2EF8ADE1-C2A8-466F-9871-ABC2F73C8911}
 		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A} = {94D7B2F4-91D4-4BE3-BF1A-C48DA4F7993B}
-		{18355BD0-D0A5-4B7A-AB1F-785B6CB1EDB6} = {DABF27A9-2B6F-4AAC-8CE2-516058A2C925}
+		{40DD6727-A582-48F2-81EF-5B7ACA272C79} = {DABF27A9-2B6F-4AAC-8CE2-516058A2C925}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36720E54-DFF0-4A4B-9F0E-4CA15FF49487}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\..\CSUtilities\CSUtilities\CSUtilities.projitems*{18355bd0-d0a5-4b7a-ab1f-785b6cb1edb6}*SharedItemsImports = 13
-		..\..\CSUtilities\CSUtilities\CSUtilities.projitems*{d5801033-f407-40e1-85e6-d547a81d1470}*SharedItemsImports = 5
+		CSUtilities\CSUtilities\CSUtilities.projitems*{40dd6727-a582-48f2-81ef-5b7aca272c79}*SharedItemsImports = 13
+		CSUtilities\CSUtilities\CSUtilities.projitems*{d5801033-f407-40e1-85e6-d547a81d1470}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

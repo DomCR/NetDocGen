@@ -1,4 +1,5 @@
-﻿using CSUtilities.Extensions;
+﻿using CSUtilities;
+using CSUtilities.Extensions;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace NetDocGen.Runner.Commands
@@ -22,7 +23,7 @@ namespace NetDocGen.Runner.Commands
 			Input.TrowIfNullOrEmpty();
 			if (!File.Exists(Input))
 			{
-				throw new ArgumentException();
+				throw new ArgumentException($"Input file {Input} doesn't exists");
 			}
 
 			Output.TrowIfNullOrEmpty();
@@ -39,7 +40,7 @@ namespace NetDocGen.Runner.Commands
 
 		protected void processOptions()
 		{
-			if(ClearOutputDirectory && Directory.Exists(Output))
+			if (ClearOutputDirectory && Directory.Exists(Output))
 			{
 				Directory.Delete(Output, true);
 			}
