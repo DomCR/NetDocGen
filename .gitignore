@@ -351,3 +351,5 @@ MigrationBackup/
 
 # Custom
 /local
+/src/Test/_samples
+/src/Test/_output
