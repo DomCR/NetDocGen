@@ -1,4 +1,5 @@
-﻿using NetDocGen.Xml;
+﻿using CSUtilities.Extensions;
+using NetDocGen.Xml;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -28,11 +29,14 @@ namespace NetDocGen
 		{
 			this._assembly = assembly;
 
-			this.Version = this._assembly.GetName().Version.ToString();
 			this.Name = Path.GetFileNameWithoutExtension(this._assembly.Location);
 
 			this.Summary = this._assembly.GetCustomAttribute<AssemblyDescriptionAttribute>()?.Description;
-			//this.Version = this._assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+			this.Version = this._assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+').FirstOrDefault();
+			if (this.Version.IsNullOrEmpty())
+			{
+				this.Version = this._assembly.GetName().Version.ToString();
+			}
 
 			this.processAssembly();
 		}

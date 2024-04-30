@@ -51,7 +51,7 @@ namespace NetDocGen.Runner.Commands
 			}
 			if (!File.Exists(XmlInput))
 			{
-				throw new ArgumentException();
+				throw new ArgumentException($"Input xml file {XmlInput} not found");
 			}
 		}
 
