@@ -9,8 +9,9 @@
 		<Description>Hello this is a description</Description>
 	</PropertyGroup>
 
-	<Target Name="CopyXml" AfterTargets="Build" Condition="Exists('$(SolutionDir)..\local')">
-		<Copy SourceFiles="$(ProjectDir)obj\Debug\net6.0\MockAssembly.xml" DestinationFolder="$(SolutionDir)..\local" />
+	<Target Name="CopyXml" AfterTargets="Build" Condition="Exists('$(SolutionDir).\Test\_samples')">
+		<Copy SourceFiles="$(ProjectDir)obj\Debug\net6.0\MockAssembly.xml" DestinationFolder="$(SolutionDir).\Test\_samples" />
+		<Copy SourceFiles="$(ProjectDir)obj\Debug\net6.0\MockAssembly.dll" DestinationFolder="$(SolutionDir).\Test\_samples" />
 	</Target>
 
 </Project>

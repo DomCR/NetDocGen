@@ -1,9 +1,6 @@
 ﻿using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.DependencyInjection;
 using NetDocGen.Runner.Commands;
-using NetDocGen.Services;
-using NetDocGen.Xml;
-using System.Reflection;
 
 namespace NetDocGen.Runner
 {

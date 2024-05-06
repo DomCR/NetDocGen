@@ -17,6 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NetDocGen\NetDocGen.csproj" />
+    <ProjectReference Include="..\Test\MockAssembly\MockAssembly.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 

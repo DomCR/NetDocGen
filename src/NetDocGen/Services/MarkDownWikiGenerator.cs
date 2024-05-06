@@ -17,13 +17,19 @@ namespace NetDocGen.Services
 			}
 
 			this.createSidebar(documentation, outputFolder);
-			this.creatFooter(outputFolder);
+			this.creatFooter(documentation, outputFolder);
 			this.createPages(documentation, outputFolder);
 		}
 
-		private void creatFooter(string outputFolder)
+		private void creatFooter(AssemblyDocumentation documentation, string outputFolder)
 		{
 			string path = Path.Combine(outputFolder, "_Footer.md");
+
+			this._footerBuilder.AppendLine($"{documentation.Name} Class Library Documentation");
+
+			string netdocgen = MarkdownFileBuilder.LinkString("NetDocGen", "https://github.com/DomCR/NetDocGen");
+			this._footerBuilder.AppendLine($"Documentation created by {netdocgen}");
+
 			File.WriteAllText(path, this._footerBuilder.ToString());
 		}
 

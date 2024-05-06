@@ -30,6 +30,9 @@ EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "CSUtilities", "CSUtilities\CSUtilities\CSUtilities.shproj", "{40DD6727-A582-48F2-81EF-5B7ACA272C79}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetDocGen.Tests", "NetDocGen.Tests\NetDocGen.Tests.csproj", "{EAA73186-95CB-40A7-8B71-E16C8C98AAC9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A} = {3DCBBEFA-83F0-4AAA-867E-94EF668F5F7A}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

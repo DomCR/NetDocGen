@@ -2,13 +2,13 @@
   "profiles": {
     "Arguments": {
       "commandName": "Project",
-      "commandLineArgs": "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.dll -o ..\\..\\..\\..\\..\\local\\output\\ACadSharp -c"
+      "commandLineArgs": "..\\..\\..\\..\\Test\\MockAssembly\\bin\\Debug\\net6.0\\MockAssembly.dll -o ..\\..\\..\\..\\..\\local\\output\\MockAssembly -c"
     },
     "Env variables": {
       "commandName": "Project",
       "environmentVariables": {
-        "INPUT": "..\\..\\..\\..\\..\\..\\ACadSharp\\ACadSharp\\bin\\Debug\\net6.0\\ACadSharp.dll",
-        "OUTPUT": "..\\..\\..\\..\\..\\local\\output\\ACadSharp",
+        "INPUT": "..\\..\\..\\..\\Test\\MockAssembly\\bin\\Debug\\net6.0\\MockAssembly.dll",
+        "OUTPUT": "..\\..\\..\\..\\..\\local\\output\\MockAssembly",
         "CLEAR_OUTPUT_DIRECTORY": "true"
       }
     }

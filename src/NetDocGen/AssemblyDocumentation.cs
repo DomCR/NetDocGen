@@ -11,7 +11,11 @@ namespace NetDocGen
 
 		public override string FullName { get { return this.Name; } }
 
-		public string Version { get; private set; }
+		public string Version { get; }
+
+		public string Company { get; }
+
+		public string CopyRight { get; }
 
 		public IEnumerable<NamespaceDocumentation> Namespaces
 		{
@@ -20,6 +24,7 @@ namespace NetDocGen
 				return this._namespaces.Values;
 			}
 		}
+
 
 		private Assembly _assembly;
 
@@ -37,6 +42,9 @@ namespace NetDocGen
 			{
 				this.Version = this._assembly.GetName().Version.ToString();
 			}
+
+			this.Company = this._assembly.GetCustomAttribute<AssemblyCompanyAttribute>()?.Company;
+			this.CopyRight = this._assembly.GetCustomAttribute<AssemblyCopyrightAttribute>()?.Copyright;
 
 			this.processAssembly();
 		}
@@ -63,10 +71,8 @@ namespace NetDocGen
 
 		public void UpdateComments(string path)
 		{
-			using (XmlParser parser = new XmlParser(path))
-			{
-				parser.ParseAssembly(this);
-			}
+			XmlParser parser = new XmlParser(path);
+			parser.ParseAssembly(this);
 		}
 
 		private void processAssembly()

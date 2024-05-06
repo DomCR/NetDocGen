@@ -17,4 +17,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("77671732-54f6-4ec7-8f1f-c46ddd4bbef0")]
 
+[assembly: InternalsVisibleTo("NetDocGen.Tests")]
 [assembly: InternalsVisibleTo("NetDocGen.Runner")]

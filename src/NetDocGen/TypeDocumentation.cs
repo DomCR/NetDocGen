@@ -8,9 +8,15 @@ namespace NetDocGen
 
 		public List<MethodDocumentation> Methods { get; } = new();
 
-		public List<PropertyDocumentation> Properties { get; } = new();
+		public IEnumerable<PropertyDocumentation> Properties { get { return this._properties.Values; } }
 
 		public List<TypeDocumentation> NestedTypes { get; } = new();
+
+		public List<EventDocumentation> Events { get; } = new();
+
+		private Dictionary<string, PropertyDocumentation> _properties = new();
+
+		private Dictionary<string, MethodDocumentation> _methods = new();
 
 		public TypeDocumentation(string fullName) : base(fullName)
 		{
@@ -21,10 +27,15 @@ namespace NetDocGen
 		{
 		}
 
-		public TypeDocumentation(Type type, NamespaceDocumentation owner) : base(type, owner)
+		public TypeDocumentation(Type type, CommonDocumentation owner) : base(type, owner)
 		{
 			this.FullName = this.removeInvalidCharacters(type.FullName);
 			this.processMembers();
+		}
+
+		public void AddProperty(PropertyDocumentation property)
+		{
+			this._properties.Add(property.Name, property);
 		}
 
 		private void processMembers()
@@ -45,45 +56,36 @@ namespace NetDocGen
 														| BindingFlags.DeclaredOnly))
 			{
 				PropertyDocumentation pdoc = new PropertyDocumentation(p, this);
-				this.Properties.Add(pdoc);
+				this._properties.Add(pdoc.Name, pdoc);
 			}
 
-			foreach (var item in ReflectionInfo.GetNestedTypes(BindingFlags.Public
+			foreach (FieldInfo f in ReflectionInfo.GetFields(BindingFlags.Public
+											| BindingFlags.Instance
+											| BindingFlags.DeclaredOnly))
+			{
+				//TODO: Add fieds in types
+			}
+
+			foreach (Type t in ReflectionInfo.GetNestedTypes(BindingFlags.Public
 														| BindingFlags.Instance
 														| BindingFlags.DeclaredOnly))
 			{
+				TypeDocumentation tdoc = new TypeDocumentation(t, this);
+				this.NestedTypes.Add(tdoc);
+			}
+
+			foreach (EventInfo e in ReflectionInfo.GetEvents(BindingFlags.Public
+												| BindingFlags.Instance
+												| BindingFlags.DeclaredOnly))
+			{
+				EventDocumentation tdoc = new EventDocumentation(e, this);
+				this.Events.Add(tdoc);
 			}
 		}
-	}
 
-	public class PropertyDocumentation : MemberDocumentation<PropertyInfo, TypeDocumentation>
-	{
-		public PropertyDocumentation(string fullName) : base(fullName) { }
-
-		public PropertyDocumentation(PropertyInfo property) : base(property)
+		internal PropertyDocumentation GetProperty(string name)
 		{
-		}
-
-		public PropertyDocumentation(PropertyInfo property, TypeDocumentation owner) : base(property, owner)
-		{
-		}
-	}
-
-	public class MethodDocumentation : MemberDocumentation<MethodInfo, TypeDocumentation>
-	{
-		public override string FullName { get; }
-
-		public MethodDocumentation(string fullName) : base(fullName)
-		{
-			this.FullName = fullName;
-		}
-
-		public MethodDocumentation(MethodInfo method) : base(method)
-		{
-		}
-
-		public MethodDocumentation(MethodInfo property, TypeDocumentation owner) : base(property, owner)
-		{
+			return this._properties[name];
 		}
 	}
 }

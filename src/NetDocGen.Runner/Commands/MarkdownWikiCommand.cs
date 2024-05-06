@@ -22,10 +22,8 @@ namespace NetDocGen.Runner.Commands
 			this.processOptions();
 
 			AssemblyDocumentation doc = new AssemblyDocumentation(Assembly.LoadFrom(Input));
-			using (XmlParser parser = new XmlParser(this.XmlInput))
-			{
-				parser.ParseAssembly(doc);
-			}
+			XmlParser parser = new XmlParser(this.XmlInput);
+			parser.ParseAssembly(doc);
 
 			this._generator.Generate(doc, this.Output);
 		}

@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.XPath;
 using System.Xml;
 
 namespace NetDocGen.Xml
 {
-	public class XmlParser : IDisposable
+	public class XmlParser
 	{
 		public bool UnIndentText { get; set; } = true;
 
@@ -15,9 +14,11 @@ namespace NetDocGen.Xml
 		private const string _assemblyXPath = "/doc/assembly";
 		private const string _membersXPath = "/doc/members/member";
 		private const string _memberXPath = "/doc/members/member[@name='{0}']";
+
 		private const string _summaryXPath = "summary";
 		private const string _remarksXPath = "remarks";
 		private const string _exampleXPath = "example";
+		private const string _valueXPath = "value";
 		private const string _paramXPath = "param";
 		private const string _typeParamXPath = "typeparam";
 		private const string _responsesXPath = "response";
@@ -85,7 +86,7 @@ namespace NetDocGen.Xml
 						break;
 					case MemberTypes.Property:
 						doc = new PropertyDocumentation(name);
-						documentation.Properties.Add(doc as PropertyDocumentation);
+						documentation.AddProperty(doc as PropertyDocumentation);
 						break;
 					case MemberTypes.Field:
 					case MemberTypes.Event:
@@ -108,11 +109,6 @@ namespace NetDocGen.Xml
 			TypeDocumentation tdoc = new TypeDocumentation(type);
 			this.parseType(type, tdoc);
 			return tdoc;
-		}
-
-		/// <inheritdoc/>
-		public void Dispose()
-		{
 		}
 
 		private void parseType(Type type, TypeDocumentation tdoc)
@@ -159,6 +155,9 @@ namespace NetDocGen.Xml
 			//comments = ResolveInheritdocComments(comments, type);
 			switch (documentation)
 			{
+				case PropertyDocumentation propertyDocumentation:
+					this.getPropertyComments(node, propertyDocumentation);
+					break;
 				case MethodDocumentation methodDocumentation:
 					this.getMethodComments(node, methodDocumentation);
 					break;
@@ -173,6 +172,11 @@ namespace NetDocGen.Xml
 			documentation.Remarks = this.getComment(rootNode, _remarksXPath);
 			documentation.Example = this.getComment(rootNode, _exampleXPath);
 			//documentation.Inheritdoc = GetInheritdocTag(rootNode);
+		}
+
+		private void getPropertyComments(XPathNavigator rootNode, PropertyDocumentation documentation)
+		{
+			documentation.ValueDescription = this.getComment(rootNode, _valueXPath);
 		}
 
 		private void getMethodComments(XPathNavigator rootNode, MethodDocumentation documentation)

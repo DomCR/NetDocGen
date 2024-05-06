@@ -5,6 +5,9 @@ namespace MockAssembly
 	/// <summary>
 	/// Summary for a mock class
 	/// </summary>
+	/// <remarks>
+	/// Remarks text for mock class
+	/// </remarks>
 	public class MockClass
 	{
 		/// <summary>
@@ -62,17 +65,14 @@ namespace MockAssembly
 
 		protected void myProtectedMethod()
 		{
-
 		}
 
 		internal void myInternalMethod()
 		{
-
 		}
 
 		private void myPrivateMethod()
 		{
-
 		}
 	}
 }
