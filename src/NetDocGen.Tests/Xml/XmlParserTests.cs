@@ -34,6 +34,7 @@ namespace NetDocGen.Tests.Xml
 
 			var pname = doc.GetProperty(nameof(MockClass.Name));
 			Assert.Equal("This is a public property", pname.Summary);
+			Assert.Equal("This is a remarks tag value for a public property", pname.Remarks);
 
 			var pconstrain = doc.GetProperty(nameof(MockClass.ConstrainValue));
 			Assert.Equal("This is a public property with a value description", pconstrain.Summary);

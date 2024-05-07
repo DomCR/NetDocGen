@@ -179,8 +179,14 @@ namespace NetDocGen.Xml
 			{
 				documentation.Summary = summary;
 			}
-			documentation.Remarks = this.getComment(rootNode, _remarksXPath);
-			documentation.Example = this.getComment(rootNode, _exampleXPath);
+			if (this.tryGetComment(rootNode, _remarksXPath, out string remarks))
+			{
+				documentation.Remarks = remarks;
+			}
+			if (this.tryGetComment(rootNode, _exampleXPath, out string example))
+			{
+				documentation.Example = example;
+			}
 		}
 
 		private void resolveInherit(CommonDocumentation documentation)
@@ -205,22 +211,20 @@ namespace NetDocGen.Xml
 					break;
 				}
 			}
-		
+
 			//TODO: Check base type
 		}
 
 		private void getPropertyComments(XPathNavigator rootNode, PropertyDocumentation documentation)
 		{
-			documentation.ValueDescription = this.getComment(rootNode, _valueXPath);
+			if (this.tryGetComment(rootNode, _valueXPath, out string valueDescription))
+			{
+				documentation.ValueDescription = valueDescription;
+			}
 		}
 
 		private void getMethodComments(XPathNavigator rootNode, MethodDocumentation documentation)
 		{
-		}
-
-		private string getComment(XPathNavigator rootNode, string name)
-		{
-			return this.getXmlText(rootNode?.SelectSingleNode(name));
 		}
 
 		private bool tryGetComment(XPathNavigator rootNode, string name, out string value)

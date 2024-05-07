@@ -18,6 +18,9 @@ namespace MockAssembly
 		/// <summary>
 		/// This is a public property
 		/// </summary>
+		/// <remarks>
+		/// This is a remarks tag value for a public property
+		/// </remarks>
 		public string Name { get; set; }
 
 		/// <summary>
@@ -74,22 +77,5 @@ namespace MockAssembly
 		private void myPrivateMethod()
 		{
 		}
-	}
-
-	public interface IMockInterface
-	{
-		/// <summary>
-		/// Base summary property from an interface
-		/// </summary>
-		string BaseProperty { get; set; }
-	}
-
-	/// <summary>
-	/// This is a class that impmlements an int
-	/// </summary>
-	public class MockImplementation : IMockInterface
-	{
-		/// <inheritdoc/>
-		public string BaseProperty { get; set; }
 	}
 }
