@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Xml.XPath;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace NetDocGen.Xml
 {
@@ -152,7 +153,7 @@ namespace NetDocGen.Xml
 				return;
 
 			this.getCommonComments(node, documentation);
-			//comments = ResolveInheritdocComments(comments, type);
+
 			switch (documentation)
 			{
 				case PropertyDocumentation propertyDocumentation:
@@ -168,10 +169,44 @@ namespace NetDocGen.Xml
 
 		private void getCommonComments(XPathNavigator rootNode, CommonDocumentation documentation)
 		{
-			documentation.Summary = this.getComment(rootNode, _summaryXPath);
+			var inheritNode = rootNode?.SelectSingleNode(_inheritdocXPath);
+			if (inheritNode != null)
+			{
+				this.resolveInherit(documentation);
+			}
+
+			if (this.tryGetComment(rootNode, _summaryXPath, out string summary))
+			{
+				documentation.Summary = summary;
+			}
 			documentation.Remarks = this.getComment(rootNode, _remarksXPath);
 			documentation.Example = this.getComment(rootNode, _exampleXPath);
-			//documentation.Inheritdoc = GetInheritdocTag(rootNode);
+		}
+
+		private void resolveInherit(CommonDocumentation documentation)
+		{
+			switch (documentation)
+			{
+				case PropertyDocumentation propertyDocumentation:
+					resolveInherit(propertyDocumentation);
+					break;
+			}
+		}
+
+		private void resolveInherit(PropertyDocumentation documentation)
+		{
+			Type declaringType = documentation.ReflectionInfo.DeclaringType;
+			foreach (var item in declaringType.GetInterfaces())
+			{
+				var p = item.GetProperty(documentation.Name);
+				if (p != null)
+				{
+					this.getComments(p, documentation);
+					break;
+				}
+			}
+		
+			//TODO: Check base type
 		}
 
 		private void getPropertyComments(XPathNavigator rootNode, PropertyDocumentation documentation)
@@ -186,6 +221,21 @@ namespace NetDocGen.Xml
 		private string getComment(XPathNavigator rootNode, string name)
 		{
 			return this.getXmlText(rootNode?.SelectSingleNode(name));
+		}
+
+		private bool tryGetComment(XPathNavigator rootNode, string name, out string value)
+		{
+			var node = rootNode?.SelectSingleNode(name);
+			if (node != null)
+			{
+				value = this.getXmlText(node);
+				return true;
+			}
+			else
+			{
+				value = null;
+				return false;
+			}
 		}
 
 		private string getXmlText(XPathNavigator node)

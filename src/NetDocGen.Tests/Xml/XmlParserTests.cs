@@ -39,5 +39,16 @@ namespace NetDocGen.Tests.Xml
 			Assert.Equal("This is a public property with a value description", pconstrain.Summary);
 			Assert.Equal("Value cannot be less than 0", pconstrain.ValueDescription);
 		}
+
+		[Fact]
+		public void IneritDocTagTest()
+		{
+			TypeDocumentation doc = _instance.ParseType(typeof(MockImplementation));
+
+			Assert.NotNull(doc);
+
+			var pname = doc.GetProperty(nameof(MockImplementation.BaseProperty));
+			Assert.Equal("Base summary property from an interface", pname.Summary);
+		}
 	}
 }

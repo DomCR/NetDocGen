@@ -75,4 +75,21 @@ namespace MockAssembly
 		{
 		}
 	}
+
+	public interface IMockInterface
+	{
+		/// <summary>
+		/// Base summary property from an interface
+		/// </summary>
+		string BaseProperty { get; set; }
+	}
+
+	/// <summary>
+	/// This is a class that impmlements an int
+	/// </summary>
+	public class MockImplementation : IMockInterface
+	{
+		/// <inheritdoc/>
+		public string BaseProperty { get; set; }
+	}
 }
