@@ -7,5 +7,10 @@
 	{
 		/// <inheritdoc/>
 		public string BaseProperty { get; set; }
+
+		/// <inheritdoc/>
+		public void BaseMethodInInterface()
+		{
+		}
 	}
 }

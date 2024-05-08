@@ -12,8 +12,6 @@
 
 		public string Example { get; set; }
 
-		//public InheritdocTag Inheritdoc { get; set; }
-
 		protected CommonDocumentation()
 		{
 			this.Summary = string.Empty;

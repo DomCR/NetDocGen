@@ -6,7 +6,7 @@ namespace NetDocGen
 	{
 		public override string FullName { get; }
 
-		public List<MethodDocumentation> Methods { get; } = new();
+		public IEnumerable<MethodDocumentation> Methods { get { return this._methods.Values; } }
 
 		public IEnumerable<PropertyDocumentation> Properties { get { return this._properties.Values; } }
 
@@ -14,9 +14,9 @@ namespace NetDocGen
 
 		public List<EventDocumentation> Events { get; } = new();
 
-		private Dictionary<string, PropertyDocumentation> _properties = new();
+		private readonly Dictionary<string, MethodDocumentation> _methods = new();
 
-		private Dictionary<string, MethodDocumentation> _methods = new();
+		private readonly Dictionary<string, PropertyDocumentation> _properties = new();
 
 		public TypeDocumentation(string fullName) : base(fullName)
 		{
@@ -38,6 +38,21 @@ namespace NetDocGen
 			this._properties.Add(property.Name, property);
 		}
 
+		public void AddMethod(MethodDocumentation method)
+		{
+			this._methods.Add(method.Name, method);
+		}
+
+		public PropertyDocumentation GetProperty(string name)
+		{
+			return this._properties[name];
+		}
+
+		public MethodDocumentation GetMethod(string name)
+		{
+			return this._methods[name];
+		}
+
 		private void processMembers()
 		{
 			foreach (MethodInfo m in ReflectionInfo.GetMethods(BindingFlags.Public
@@ -48,7 +63,7 @@ namespace NetDocGen
 					continue;
 
 				MethodDocumentation mdoc = new MethodDocumentation(m, this);
-				this.Methods.Add(mdoc);
+				this._methods.Add(mdoc.Name, mdoc);
 			}
 
 			foreach (PropertyInfo p in ReflectionInfo.GetProperties(BindingFlags.Public
@@ -81,11 +96,6 @@ namespace NetDocGen
 				EventDocumentation tdoc = new EventDocumentation(e, this);
 				this.Events.Add(tdoc);
 			}
-		}
-
-		internal PropertyDocumentation GetProperty(string name)
-		{
-			return this._properties[name];
 		}
 	}
 }

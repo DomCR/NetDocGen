@@ -69,7 +69,6 @@ namespace NetDocGen.Xml
 			TypeDocumentation documentation = new TypeDocumentation(fullname);
 			this.getComments(node, documentation);
 
-			XPathExpression exp;    //Check expressions
 			XPathNodeIterator iterator = this._nav.Select($"/doc/members/member[@name[contains(.,':{fullname}')]]");
 			foreach (XPathNavigator n in iterator)
 			{
@@ -83,7 +82,7 @@ namespace NetDocGen.Xml
 					case MemberTypes.Constructor:
 					case MemberTypes.Method:
 						doc = new MethodDocumentation(name);
-						documentation.Methods.Add(doc as MethodDocumentation);
+						documentation.AddMethod(doc as MethodDocumentation);
 						break;
 					case MemberTypes.Property:
 						doc = new PropertyDocumentation(name);
@@ -191,11 +190,29 @@ namespace NetDocGen.Xml
 
 		private void resolveInherit(CommonDocumentation documentation)
 		{
+			//TODO: remove this switch, add a common interface
 			switch (documentation)
 			{
+				case MethodDocumentation methodDocumentation:
+					resolveInherit(methodDocumentation);
+					break;
 				case PropertyDocumentation propertyDocumentation:
 					resolveInherit(propertyDocumentation);
 					break;
+			}
+		}
+
+		private void resolveInherit(MethodDocumentation documentation)
+		{
+			Type declaringType = documentation.ReflectionInfo.DeclaringType;
+			foreach (var item in declaringType.GetInterfaces())
+			{
+				var p = item.GetMethod(documentation.Name);
+				if (p != null)
+				{
+					this.getComments(p, documentation);
+					break;
+				}
 			}
 		}
 

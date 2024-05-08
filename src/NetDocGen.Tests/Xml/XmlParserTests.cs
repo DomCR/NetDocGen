@@ -48,8 +48,13 @@ namespace NetDocGen.Tests.Xml
 
 			Assert.NotNull(doc);
 
-			var pname = doc.GetProperty(nameof(MockImplementation.BaseProperty));
-			Assert.Equal("Base summary property from an interface", pname.Summary);
+			var pdoc = doc.GetProperty(nameof(MockImplementation.BaseProperty));
+			Assert.Equal("Base summary property from an interface", pdoc.Summary);
+			Assert.Equal("Base remarks property from an interface", pdoc.Remarks);
+
+			var mdoc = doc.GetMethod(nameof(MockImplementation.BaseMethodInInterface));
+			Assert.Equal("Base summary method from an interface", mdoc.Summary);
+			Assert.Equal("Base remarks method from an interface", mdoc.Remarks);
 		}
 	}
 }
