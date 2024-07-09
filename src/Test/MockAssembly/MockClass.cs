@@ -57,6 +57,9 @@ namespace MockAssembly
 			this.Name = name;
 		}
 
+		/// <summary>
+		/// This is a summary for a Hello method
+		/// </summary>
 		public void Hello()
 		{
 		}

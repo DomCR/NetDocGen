@@ -9,7 +9,7 @@ namespace NetDocGen.Tests.Xml
 
 		static XmlParserTests()
 		{
-			_instance = new XmlParser(Path.Combine(TestVariables.SamplesFolder, "MockAssembly.xml"));
+			_instance = new XmlParser(TestVariables.MockAssemblyXmlPath);
 		}
 
 		[Fact]

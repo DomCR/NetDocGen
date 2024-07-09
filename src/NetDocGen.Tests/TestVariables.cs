@@ -7,18 +7,25 @@ namespace NetDocGen.Tests
 	{
 		public static string MockAssemblyPath { get { return EnvironmentVars.Get<string>("MOCK_ASSEMBLY_PATH"); } }
 
+		public static string MockAssemblyXmlPath { get { return EnvironmentVars.Get<string>("MOCK_ASSEMBLY_XML_PATH"); } }
+
 		public static string SamplesFolder { get { return EnvironmentVars.Get<string>("SAMPLES_FOLDER"); } }
 
 		public static string OutputFolder { get { return EnvironmentVars.Get<string>("OUTPUT_FOLDER"); } }
+
+		public static string OutputMarkdownFolder { get { return EnvironmentVars.Get<string>("OUTPUT_MARKDOWN_FOLDER"); } }
 
 		public static bool LocalEnv { get { return EnvironmentVars.Get<bool>("LOCAL_ENV"); } }
 
 		static TestVariables()
 		{
-			EnvironmentVars.SetIfNull("MOCK_ASSEMBLY_PATH", "..\\..\\..\\..\\Test\\_samples");
 			EnvironmentVars.SetIfNull("SAMPLES_FOLDER", "..\\..\\..\\..\\Test\\_samples");
 			EnvironmentVars.SetIfNull("OUTPUT_FOLDER", "..\\..\\..\\..\\Test\\_output");
 			EnvironmentVars.SetIfNull("LOCAL_ENV", "true");
+
+			EnvironmentVars.SetIfNull("MOCK_ASSEMBLY_PATH", Path.Combine(TestVariables.SamplesFolder, "MockAssembly.dll"));
+			EnvironmentVars.SetIfNull("MOCK_ASSEMBLY_XML_PATH", Path.Combine(TestVariables.SamplesFolder, "MockAssembly.xml"));
+			EnvironmentVars.SetIfNull("OUTPUT_MARKDOWN_FOLDER", Path.Combine(OutputFolder, "markdown"));
 		}
 
 		public static void CreateOutputFolders()
@@ -26,6 +33,11 @@ namespace NetDocGen.Tests
 			if (!Directory.Exists(OutputFolder))
 			{
 				Directory.CreateDirectory(OutputFolder);
+			}
+
+			if (!Directory.Exists(OutputMarkdownFolder))
+			{
+				Directory.CreateDirectory(OutputMarkdownFolder);
 			}
 		}
 
