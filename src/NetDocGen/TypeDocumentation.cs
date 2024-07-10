@@ -4,8 +4,6 @@ namespace NetDocGen
 {
 	public class TypeDocumentation : MemberDocumentation<Type, CommonDocumentation>
 	{
-		public override string FullName { get; }
-
 		public IEnumerable<MethodDocumentation> Methods { get { return this._methods.Values; } }
 
 		public IEnumerable<PropertyDocumentation> Properties { get { return this._properties.Values; } }
@@ -20,7 +18,6 @@ namespace NetDocGen
 
 		public TypeDocumentation(string fullName) : base(fullName)
 		{
-			this.FullName = fullName;
 		}
 
 		public TypeDocumentation(Type type) : this(type, null)
@@ -29,7 +26,6 @@ namespace NetDocGen
 
 		public TypeDocumentation(Type type, CommonDocumentation owner) : base(type, owner)
 		{
-			this.FullName = this.removeInvalidCharacters(type.FullName);
 			this.processMembers();
 		}
 
@@ -55,13 +51,10 @@ namespace NetDocGen
 
 		private void processMembers()
 		{
-			foreach (var c in ReflectionInfo.GetConstructors(BindingFlags.Public
+			foreach (ConstructorInfo c in ReflectionInfo.GetConstructors(BindingFlags.Public
 								| BindingFlags.Instance
 								| BindingFlags.DeclaredOnly))
 			{
-				if (c.IsSpecialName)
-					continue;
-
 				//TODO: Add constructors in types
 			}
 
@@ -103,8 +96,10 @@ namespace NetDocGen
 												| BindingFlags.Instance
 												| BindingFlags.DeclaredOnly))
 			{
-				EventDocumentation tdoc = new EventDocumentation(e, this);
-				this.Events.Add(tdoc);
+				//TODO: Add events in types
+
+				//EventDocumentation tdoc = new EventDocumentation(e, this);
+				//this.Events.Add(tdoc);
 			}
 		}
 	}

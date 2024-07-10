@@ -20,6 +20,8 @@ namespace NetDocGen.Tests.Xml
 
 			Assert.NotNull(doc);
 
+			Assert.Equal("MockClass", doc.Name);
+			Assert.Equal("MockAssembly.MockClass", doc.FullName);
 			Assert.Equal("Summary for a mock class", doc.Summary);
 			Assert.Equal("Remarks text for mock class", doc.Remarks);
 		}

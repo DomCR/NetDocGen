@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace NetDocGen.Extensions
@@ -10,15 +13,36 @@ namespace NetDocGen.Extensions
 	{
 		public const string ConstructorNameID = "ctor";
 
+		public static string GetTypeDefinition(this Type type)
+		{
+			string protection = string.Empty;
+			if (type.IsPublic)
+			{
+				protection = "public";
+			}
+
+			string t = string.Empty;
+			if (type.IsClass)
+			{
+				t = "class";
+			}
+
+			return $"{protection} {t} {type.Name}";
+		}
+
 		public static string GetMemberName<T>(this T member)
 			where T : MemberInfo
 		{
 			switch (member)
 			{
+				case Type type:
+					return type.Name;
 				case PropertyInfo property:
 					return property.Name;
 				case MethodBase methodBase:
 					return methodBase.GetMethodName();
+				case EventInfo eventInfo:
+					throw new NotImplementedException();
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -29,10 +53,14 @@ namespace NetDocGen.Extensions
 		{
 			switch (member)
 			{
+				case Type type:
+					return type.FullName;
 				case PropertyInfo property:
-					return property.GetMemberFullName();
+					return property.GetPropertyFullName();
 				case MethodBase methodBase:
 					return methodBase.GetMethodFullName();
+				case EventInfo eventInfo:
+					throw new NotImplementedException();
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -53,7 +81,7 @@ namespace NetDocGen.Extensions
 			var getParameters = propertyInfo?.GetMethod?.GetParameters();
 			if (getParameters?.Length > 0)
 			{
-				return getTypeXmlId(propertyInfo.DeclaringType) + "." +
+				return getTypeId(propertyInfo.DeclaringType) + "." +
 					   propertyInfo.Name +
 					   getParametersXmlId(getParameters, getGenericClassParams(propertyInfo));
 			}
@@ -61,12 +89,12 @@ namespace NetDocGen.Extensions
 			var setParameters = propertyInfo?.SetMethod?.GetParameters();
 			if (setParameters?.Length > 1)
 			{
-				return getTypeXmlId(propertyInfo.DeclaringType) + "." +
+				return getTypeId(propertyInfo.DeclaringType) + "." +
 					   propertyInfo.Name +
 					   getParametersXmlId(setParameters.Take(setParameters.Length - 1), getGenericClassParams(propertyInfo));
 			}
 
-			return getTypeXmlId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
+			return getTypeId(propertyInfo.DeclaringType) + "." + propertyInfo.Name;
 		}
 
 		/// <summary>
@@ -88,7 +116,7 @@ namespace NetDocGen.Extensions
 				throw new ArgumentNullException(nameof(method));
 			}
 
-			return $"{getTypeXmlId(method.DeclaringType)}.{method.GetMethodName()}";
+			return $"{getTypeId(method.DeclaringType)}.{method.GetMethodName()}";
 		}
 
 		private static string shortMethodName(MethodBase method)
@@ -112,7 +140,7 @@ namespace NetDocGen.Extensions
 		{
 			// Calculate the parameter string as this is in the member name in the XML
 			var parameterStrings = parameters
-				.Select(parameterInfo => getTypeXmlId(
+				.Select(parameterInfo => getTypeId(
 					parameterInfo.ParameterType,
 					parameterInfo.IsOut || parameterInfo.ParameterType.IsByRef,
 					isMethodParameter: true,
@@ -121,13 +149,11 @@ namespace NetDocGen.Extensions
 			return (parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : string.Empty;
 		}
 
-		private static string getTypeXmlId(Type type, bool isOut = false, bool isMethodParameter = false, string[] genericClassParams = null)
+		private static string getTypeId(Type type, bool isOut = false, bool isMethodParameter = false, string[] genericClassParams = null)
 		{
-			// Generic parameters of the class  are referred to as  `N where N is position of generic type.
-			// Generic parameters of the method are referred to as ``N where N is position of generic type.
 			if (type.IsGenericParameter)
 			{
-				return $"{genericParamPrefix(type, genericClassParams)}{type.GenericParameterPosition}";
+				return type.Name;
 			}
 
 			Type[] args = type.GetGenericArguments();
@@ -140,7 +166,7 @@ namespace NetDocGen.Extensions
 				(type.IsGenericType || args.Length > 0) && (!type.IsClass || isMethodParameter))
 			{
 				var paramString = string.Join(",",
-					args.Select(o => getTypeXmlId(o, isOut: false, isMethodParameter, genericClassParams)));
+					args.Select(o => getTypeId(o, isOut: false, isMethodParameter, genericClassParams)));
 				var typeName = Regex.Replace(type.Name, "`[0-9]+", "{" + paramString + "}");
 				fullTypeName = $"{typeNamespace}{typeName}{outString}";
 			}
@@ -150,7 +176,7 @@ namespace NetDocGen.Extensions
 			}
 			else if (type.ContainsGenericParameters && (type.IsArray || type.GetElementType() != null))
 			{
-				var typeName = getTypeXmlId(type.GetElementType(), isOut: false, isMethodParameter, genericClassParams);
+				var typeName = getTypeId(type.GetElementType(), isOut: false, isMethodParameter, genericClassParams);
 				fullTypeName = $"{typeName}{(type.IsArray ? "[]" : string.Empty)}{outString}";
 			}
 			else
@@ -181,7 +207,7 @@ namespace NetDocGen.Extensions
 		{
 			if (!methodInfo.IsSpecialName ||
 				(methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit")) return string.Empty;
-			return "~" + getTypeXmlId((methodInfo as MethodInfo).ReturnType);
+			return "~" + getTypeId((methodInfo as MethodInfo).ReturnType);
 		}
 
 		private static string[] getGenericClassParams(MemberInfo info)

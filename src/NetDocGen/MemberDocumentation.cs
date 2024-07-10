@@ -43,10 +43,5 @@ namespace NetDocGen
 		{
 			return this.Owner?.GetRoot();
 		}
-
-		protected string removeInvalidCharacters(string name)
-		{
-			return name.Replace("`1", "<T>");
-		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using NetDocGen.Markdown;
+﻿using NetDocGen.Extensions;
+using NetDocGen.Markdown;
 using NetDocGen.Utils;
 using System.Xml.Linq;
 
@@ -18,11 +19,8 @@ namespace NetDocGen.Pages
 
 			builder.TextWithHeader(2, "Remarks", _documentation.Remarks);
 
-			//Definition
-			builder.Header(2, "Definition");
-			builder.Append("Namespace:", Markdown.MarkdownTextStyle.Bold);
-			string ns = MarkdownFileBuilder.LinkString(_documentation.Owner.FullName, PathUtils.ToLink(_documentation.Owner.FullName));
-			builder.AppendLine($" {ns}");
+			//TODO: Definition
+			//this.writeDefinition();
 
 			//Inheritance
 
@@ -33,6 +31,24 @@ namespace NetDocGen.Pages
 			buildDataTable(2, "Events", this._documentation.Events, true);
 
 			//Events
+		}
+
+		protected void writeDefinition()
+		{
+			builder.Header(2, "Definition");
+			builder.Append("Namespace:", Markdown.MarkdownTextStyle.Bold);
+			string ns = MarkdownFileBuilder.LinkString(_documentation.Owner.FullName, PathUtils.ToLink(_documentation.Owner.FullName));
+			builder.AppendLine($" {ns}");
+
+			builder.AppendLine("C#", MarkdownTextStyle.Bold);
+
+			this._documentation.ReflectionInfo.GetTypeDefinition();
+
+			builder.Code($"class {this._documentation.Name}", "C#");
+
+			//``` C#
+			//public abstract class DxfObject
+			//```
 		}
 	}
 }

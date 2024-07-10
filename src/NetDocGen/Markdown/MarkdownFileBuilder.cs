@@ -114,13 +114,11 @@ namespace NetDocGen.Markdown
 			Link(altText, imageUrl);
 		}
 
-		public void Code(string text)
+		public void Code(string text, string coding = null)
 		{
 			this._sb.AppendLine();
-			this._sb.AppendLine(codeStart);
-			this._sb.AppendLine();
+			this._sb.AppendLine(string.IsNullOrEmpty(coding) ? codeStart : $"{codeStart}{coding}");
 			this._sb.AppendLine(text);
-			this._sb.AppendLine();
 			this._sb.AppendLine(codeEnd);
 			this._sb.AppendLine();
 		}

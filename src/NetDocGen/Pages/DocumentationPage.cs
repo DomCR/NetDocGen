@@ -48,10 +48,12 @@ namespace NetDocGen.Pages
 			{
 				case AssemblyDocumentation assemblyDocumentation:
 					return new AssemblyPage(outputFolder, assemblyDocumentation);
-				case TypeDocumentation typeDocumentation:
-					return new TypePage(outputFolder, typeDocumentation);
+			case MethodDocumentation methodDocumentation:
+					return new MethodPage(outputFolder, methodDocumentation);
 				case PropertyDocumentation propertyDocumentation:
 					return new PropertyPage(outputFolder, propertyDocumentation);
+				case TypeDocumentation typeDocumentation:
+					return new TypePage(outputFolder, typeDocumentation);
 				default:
 					throw new NotSupportedException($"[{typeof(T).FullName}] not supported");
 			}

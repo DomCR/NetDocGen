@@ -117,5 +117,19 @@ namespace NetDocGen.Tests.Extensions
 			Assert.Equal("MethodWithMultipleGeneric<T,R>", name);
 			Assert.Equal("MockAssembly.MockClass.MethodWithMultipleGeneric<T,R>", fullname);
 		}
+
+		[Fact]
+		public void GetMethodWithGenericParameter()
+		{
+			var m = typeof(MockClass).GetMethod(nameof(MockClass.MethodWithGenericParam));
+
+			Assert.NotNull(m);
+
+			string name = m.GetMethodName();
+			string fullname = m.GetMethodFullName();
+
+			Assert.Equal("MethodWithGenericParam<T>(T)", name);
+			Assert.Equal("MockAssembly.MockClass.MethodWithGenericParam<T>(T)", fullname);
+		}
 	}
 }
