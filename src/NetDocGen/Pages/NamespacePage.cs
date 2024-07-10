@@ -1,25 +1,18 @@
-﻿using NetDocGen.Utils;
-
-namespace NetDocGen.Pages
+﻿namespace NetDocGen.Pages
 {
-	public class NamespacePage : DocumentationPage
+	public class NamespacePage : DocumentationPage<NamespaceDocumentation>
 	{
 		protected override string title { get { return $"{this._documentation.FullName} Namespace"; } }
 
-		protected override string fileName { get { return PathUtils.ToLink(this._documentation.FullName); } }
-
-		private readonly NamespaceDocumentation _documentation;
-
-		public NamespacePage(NamespaceDocumentation documentation, string outputFolder) : base(outputFolder)
+		public NamespacePage(string outputFolder, NamespaceDocumentation documentation) : base(outputFolder, documentation)
 		{
-			this._documentation = documentation;
 		}
 
 		protected override void build()
 		{
 			foreach (TypeDocumentation t in _documentation.Types.OrderBy(t => t.Name))
 			{
-				TypePage tpage = new TypePage(t, OutputFolder);
+				TypePage tpage = new TypePage(OutputFolder, t);
 				tpage.CreateFile();
 			}
 

@@ -41,6 +41,22 @@ namespace NetDocGen.Pages
 			output.Append(this.builder.ToString());
 		}
 
+		public static DocumentationPage GeneratePage<T>(string outputFolder, T documentation)
+			where T : CommonDocumentation
+		{
+			switch (documentation)
+			{
+				case AssemblyDocumentation assemblyDocumentation:
+					return new AssemblyPage(outputFolder, assemblyDocumentation);
+				case TypeDocumentation typeDocumentation:
+					return new TypePage(outputFolder, typeDocumentation);
+				case PropertyDocumentation propertyDocumentation:
+					return new PropertyPage(outputFolder, propertyDocumentation);
+				default:
+					throw new NotSupportedException($"[{typeof(T).FullName}] not supported");
+			}
+		}
+
 		protected virtual void build() { }
 
 		protected virtual string createFilePath()
@@ -55,7 +71,8 @@ namespace NetDocGen.Pages
 			return Path.Combine(OutputFolder, file);
 		}
 
-		protected void buildDataTable(int level, string title, IEnumerable<CommonDocumentation> data, bool linkName = false)
+		protected void buildDataTable<T>(int level, string title, IEnumerable<T> data, bool createSubpages = false)
+			where T : CommonDocumentation
 		{
 			if (!data.Any())
 			{
@@ -67,10 +84,19 @@ namespace NetDocGen.Pages
 			string[] cols = new string[] { "Name", "Summary" };
 
 			List<List<string>> rows = new();
-			foreach (CommonDocumentation item in data)
+			foreach (T item in data)
 			{
-				string name = linkName ?
-					MarkdownFileBuilder.LinkString(item.Name, PathUtils.ToLink(item.FullName)) : item.Name;
+				string name = string.Empty;
+				if (createSubpages)
+				{
+					name = MarkdownFileBuilder.LinkString(item.Name, PathUtils.ToLink(item.FullName));
+					var page = DocumentationPage.GeneratePage(this.OutputFolder, item);
+					page.CreateFile();
+				}
+				else
+				{
+					name = item.Name;
+				}
 
 				rows.Add(new List<string>()
 				{
@@ -83,6 +109,19 @@ namespace NetDocGen.Pages
 				cols,
 				alignment: new string[] { ":-", ":-" },
 				items: rows);
+		}
+	}
+
+	public abstract class DocumentationPage<T> : DocumentationPage
+	where T : CommonDocumentation
+	{
+		protected override string fileName { get { return PathUtils.ToLink(this._documentation.FullName); } }
+
+		protected readonly T _documentation;
+
+		protected DocumentationPage(string outputFolder, T documentation) : base(outputFolder)
+		{
+			this._documentation = documentation;
 		}
 	}
 }

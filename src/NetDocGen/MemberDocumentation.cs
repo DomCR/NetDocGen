@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using NetDocGen.Extensions;
 using System.Reflection;
 
 namespace NetDocGen
 {
-	public class MemberDocumentation<T, R> : CommonDocumentation
+	public abstract class MemberDocumentation : CommonDocumentation
+	{
+	}
+
+	public abstract class MemberDocumentation<T, R> : MemberDocumentation
 		where T : MemberInfo
 		where R : CommonDocumentation
 	{
@@ -26,13 +30,8 @@ namespace NetDocGen
 		public MemberDocumentation(T info)
 		{
 			this.ReflectionInfo = info;
-			this.Name = this.removeInvalidCharacters(this.ReflectionInfo.Name);
-
-			if (this.ReflectionInfo.DeclaringType != null)
-			{
-				string fname = $"{this.ReflectionInfo.DeclaringType.FullName}.{this.Name}";
-				this._fullName = this.removeInvalidCharacters(fname);
-			}
+			this.Name = info.GetMemberName();
+			this._fullName = info.GetMemberFullName();
 		}
 
 		public MemberDocumentation(T info, R owner) : this(info)

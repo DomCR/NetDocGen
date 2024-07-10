@@ -35,7 +35,7 @@ namespace NetDocGen.Services
 
 		private void createPages(AssemblyDocumentation documentation, string outputFolder)
 		{
-			AssemblyPage assemblyPage = new AssemblyPage(documentation, outputFolder);
+			AssemblyPage assemblyPage = new AssemblyPage(outputFolder, documentation);
 			assemblyPage.CreateFile();
 		}
 

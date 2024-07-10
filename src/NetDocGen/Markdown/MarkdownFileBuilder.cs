@@ -9,18 +9,6 @@ namespace NetDocGen.Markdown
 		Left,
 	}
 
-	public enum MarkdownTextStyle
-	{
-		None,
-		Bold,
-		Code,
-		Italic,
-		Strikethrough,
-		BoldAndItalic,
-		Subscript,
-		Superscript
-	}
-
 	public class MarkdownFileBuilder
 	{
 		private const string codeStart = "```";
@@ -36,6 +24,11 @@ namespace NetDocGen.Markdown
 		public void Append(string text)
 		{
 			this._sb.Append(text);
+		}
+
+		public void Append(string text, MarkdownTextStyle style)
+		{
+			this._sb.Append($"{this.getStylePrefix(style)}{text}{this.getStyleSufix(style)}");
 		}
 
 		public void HorizontalRule()
@@ -59,6 +52,17 @@ namespace NetDocGen.Markdown
 		public void AppendLine(string text, MarkdownTextStyle style)
 		{
 			this._sb.AppendLine($"{this.getStylePrefix(style)}{text}{this.getStyleSufix(style)}");
+		}
+
+		public void TextWithHeader(int level, string header, string text)
+		{
+			if (string.IsNullOrEmpty(text))
+			{
+				return;
+			}
+
+			this.Header(level, header);
+			this.AppendLine(text);
 		}
 
 		public void Header(int level, string text)

@@ -1,5 +1,6 @@
 ﻿using MockAssembly;
 using NetDocGen.Xml;
+using System.Reflection;
 
 namespace NetDocGen.Tests.Xml
 {

@@ -64,9 +64,57 @@ namespace MockAssembly
 		{
 		}
 
+		/// <summary>
+		/// Overload method with a parameter.
+		/// </summary>
+		/// <param name="param">random parameter.</param>
+		public void Hello(string param)
+		{
+		}
+
+		/// <summary>
+		/// Overload method with 2 parameters
+		/// </summary>
+		/// <param name="param1"></param>
+		/// <param name="param2"></param>
+		public void Hello(string param1, string param2)
+		{
+		}
+
+		/// <summary>
+		/// This one returns an int.
+		/// </summary>
+		/// <returns>returns always 0.</returns>
 		public int ZeroMethod()
 		{
 			return 0;
+		}
+
+		public MockClass Create()
+		{
+			return new MockClass();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public void MethodWithGeneric<T>()
+		{
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="R"></typeparam>
+		public void MethodWithMultipleGeneric<T, R>()
+		{
+
+		}
+
+		public void MethodWithGenericParam<T>(T param)
+		{
 		}
 
 		protected void myProtectedMethod()

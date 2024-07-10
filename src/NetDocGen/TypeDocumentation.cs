@@ -55,6 +55,16 @@ namespace NetDocGen
 
 		private void processMembers()
 		{
+			foreach (var c in ReflectionInfo.GetConstructors(BindingFlags.Public
+								| BindingFlags.Instance
+								| BindingFlags.DeclaredOnly))
+			{
+				if (c.IsSpecialName)
+					continue;
+
+				//TODO: Add constructors in types
+			}
+
 			foreach (MethodInfo m in ReflectionInfo.GetMethods(BindingFlags.Public
 											| BindingFlags.Instance
 											| BindingFlags.DeclaredOnly))
@@ -78,7 +88,7 @@ namespace NetDocGen
 											| BindingFlags.Instance
 											| BindingFlags.DeclaredOnly))
 			{
-				//TODO: Add fieds in types
+				//TODO: Add fields in types
 			}
 
 			foreach (Type t in ReflectionInfo.GetNestedTypes(BindingFlags.Public
