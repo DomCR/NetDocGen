@@ -48,7 +48,7 @@ namespace NetDocGen.Pages
 			{
 				case AssemblyDocumentation assemblyDocumentation:
 					return new AssemblyPage(outputFolder, assemblyDocumentation);
-			case MethodDocumentation methodDocumentation:
+				case MethodDocumentation methodDocumentation:
 					return new MethodPage(outputFolder, methodDocumentation);
 				case PropertyDocumentation propertyDocumentation:
 					return new PropertyPage(outputFolder, propertyDocumentation);
@@ -86,7 +86,7 @@ namespace NetDocGen.Pages
 			string[] cols = new string[] { "Name", "Summary" };
 
 			List<List<string>> rows = new();
-			foreach (T item in data)
+			foreach (T item in data.OrderBy(a => a.Name))
 			{
 				string name = string.Empty;
 				if (createSubpages)
