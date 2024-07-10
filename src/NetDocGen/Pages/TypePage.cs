@@ -45,10 +45,6 @@ namespace NetDocGen.Pages
 			this._documentation.ReflectionInfo.GetTypeDefinition();
 
 			builder.Code($"class {this._documentation.Name}", "C#");
-
-			//``` C#
-			//public abstract class DxfObject
-			//```
 		}
 	}
 }
