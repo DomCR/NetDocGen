@@ -9,7 +9,7 @@
 	<PropertyGroup>
 		<PackageId>NetDocGen.Runner</PackageId>
 		<Authors>DomCr</Authors>
-		<Version>0.0.1</Version>
+		<Version>0.1.0</Version>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/DomCR/NetDocGen</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
