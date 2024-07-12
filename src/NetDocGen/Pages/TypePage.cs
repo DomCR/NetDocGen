@@ -1,6 +1,7 @@
 ﻿using NetDocGen.Extensions;
 using NetDocGen.Markdown;
 using NetDocGen.Utils;
+using System.Reflection;
 using System.Xml.Linq;
 
 namespace NetDocGen.Pages
@@ -26,9 +27,9 @@ namespace NetDocGen.Pages
 
 			//Derived -> optional
 
-			buildDataTable(2, "Properties", this._documentation.Properties, true);
-			buildDataTable(2, "Methods", this._documentation.Methods, true);
-			buildDataTable(2, "Events", this._documentation.Events, true);
+			buildDataTable<PropertyDocumentation, PropertyInfo>(2, "Properties", this._documentation.Properties, true);
+			buildDataTable<MethodDocumentation, MethodInfo>(2, "Methods", this._documentation.Methods, true);
+			buildDataTable<EventDocumentation, EventInfo>(2, "Events", this._documentation.Events, true);
 
 			//Events
 		}
@@ -36,7 +37,7 @@ namespace NetDocGen.Pages
 		protected override void writeDefinition()
 		{
 			this.writeDefinition();
-			
+
 			builder.Append("Namespace:", MarkdownTextStyle.Bold);
 			string ns = MarkdownFileBuilder.LinkString(_documentation.Owner.FullName, PathUtils.ToLink(_documentation.Owner.FullName));
 			builder.AppendLine($" {ns}");

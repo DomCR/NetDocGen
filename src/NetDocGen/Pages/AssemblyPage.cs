@@ -25,7 +25,7 @@
 
 				this.builder.Header(2, $"{ns.FullName} Namespace", ns.FullName);
 
-				this.buildDataTable(3, "Classes", ns.Types.OrderBy(t => t.Name), true);
+				this.buildDataTable<TypeDocumentation, Type>(3, "Classes", ns.Types, true);
 
 				this.builder.AppendLine();
 			}

@@ -19,6 +19,17 @@ namespace NetDocGen.Tests.Extensions
 		}
 
 		[Fact]
+		public void GetPropertySignature()
+		{
+			var t = typeof(MockClass).GetProperty(nameof(MockClass.Name));
+			string signature = t.GetSignature();
+
+			Assert.NotNull(signature);
+
+			Assert.Equal("public String Name { get; set; }", signature);
+		}
+
+		[Fact]
 		public void GetConstructorName()
 		{
 			var m = typeof(MockClass).GetConstructor(new Type[] { });

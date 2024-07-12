@@ -3,11 +3,7 @@ using System.Reflection;
 
 namespace NetDocGen
 {
-	public abstract class MemberDocumentation : CommonDocumentation
-	{
-	}
-
-	public abstract class MemberDocumentation<T, R> : MemberDocumentation
+	public abstract class MemberDocumentation<T, R> : CommonDocumentation, IMemberDocumentation<T>
 		where T : MemberInfo
 		where R : CommonDocumentation
 	{

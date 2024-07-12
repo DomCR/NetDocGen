@@ -1,6 +1,6 @@
 ﻿namespace NetDocGen
 {
-	public abstract class CommonDocumentation
+	public abstract class CommonDocumentation: ICommonDocumentation
 	{
 		public abstract string Name { get; }
 

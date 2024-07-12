@@ -16,7 +16,7 @@
 				tpage.CreateFile();
 			}
 
-			this.buildDataTable(2, "Classes", _documentation.Types.OrderBy(t => t.Name), true);
+			this.buildDataTable<TypeDocumentation, Type>(2, "Classes", _documentation.Types, true);
 		}
 	}
 }

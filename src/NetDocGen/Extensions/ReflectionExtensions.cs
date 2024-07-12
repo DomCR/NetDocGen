@@ -33,11 +33,32 @@ namespace NetDocGen.Extensions
 
 			str.AppendJoin(" ", getKind(member));
 
-			str.Append(member.GetMemberName());
-			
+			str.AppendJoin(" ", getReturningType(member));
+			str.Append(" ");
+
+			str.AppendJoin(" ", member.GetMemberName());
+
 			return str.ToString();
 		}
-		
+
+		public static Type GetReturningType<T>(this T member)
+			where T : MemberInfo
+		{
+			switch (member)
+			{
+				case EventInfo eventInfo:
+					throw new NotImplementedException();
+				case FieldInfo field:
+					return field.FieldType;
+				case MethodInfo methodBase:
+					return methodBase.ReturnType;
+				case PropertyInfo property:
+					return property.PropertyType;
+				default:
+					throw new NotSupportedException($"{member.GetType().FullName} not supported");
+			}
+		}
+
 		public static string GetMemberName<T>(this T member)
 			where T : MemberInfo
 		{
@@ -408,7 +429,7 @@ namespace NetDocGen.Extensions
 		{
 			if (memberInfo is EventInfo)
 			{
-				return "event ";
+				return "event";
 			}
 
 			if (memberInfo is Type t)
@@ -416,20 +437,37 @@ namespace NetDocGen.Extensions
 				TypeInfo info = t.GetTypeInfo();
 
 				if (typeof(Delegate).GetTypeInfo().IsAssignableFrom(info))
-					return "delegate ";
+					return "delegate";
 				if (isRecord(info))
-					return "record ";
+					return "record";
 				if (info.IsClass)
-					return "class ";
+					return "class";
 				if (info.IsInterface)
-					return "interface ";
+					return "interface";
 				if (info.IsEnum)
-					return "enum ";
+					return "enum";
 				if (info.IsValueType)
-					return "struct ";
+					return "struct";
 			}
 
 			return string.Empty;
+		}
+
+		public static string getReturningType(MemberInfo member)
+		{
+			switch (member)
+			{
+				case EventInfo eventInfo:
+					return eventInfo.EventHandlerType.GetMemberName();
+				case FieldInfo fieldInfo:
+					return fieldInfo.FieldType.GetMemberName();
+				case MethodInfo methodBase:
+					return methodBase.ReturnType.GetMemberName();
+				case PropertyInfo propertyInfo:
+					return propertyInfo.PropertyType.GetMemberName();
+				default:
+					return string.Empty;
+			}
 		}
 
 		private static bool isRecord(Type type) => type.GetMethod("<Clone>$") != null;

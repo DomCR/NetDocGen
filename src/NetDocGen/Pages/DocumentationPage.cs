@@ -1,5 +1,7 @@
-﻿using NetDocGen.Markdown;
+﻿using NetDocGen.Extensions;
+using NetDocGen.Markdown;
 using NetDocGen.Utils;
+using System.Reflection;
 using System.Text;
 
 namespace NetDocGen.Pages
@@ -42,7 +44,7 @@ namespace NetDocGen.Pages
 		}
 
 		public static DocumentationPage GeneratePage<T>(string outputFolder, T documentation)
-			where T : CommonDocumentation
+			where T : ICommonDocumentation
 		{
 			switch (documentation)
 			{
@@ -73,8 +75,9 @@ namespace NetDocGen.Pages
 			return Path.Combine(OutputFolder, file);
 		}
 
-		protected void buildDataTable<T>(int level, string title, IEnumerable<T> data, bool createSubpages = false)
-			where T : CommonDocumentation
+		protected void buildDataTable<T, R>(int level, string title, IEnumerable<T> data, bool createSubpages = false)
+			where T : IMemberDocumentation<R>
+			where R : MemberInfo
 		{
 			if (!data.Any())
 			{
@@ -83,11 +86,31 @@ namespace NetDocGen.Pages
 
 			builder.Header(level, title);
 
-			string[] cols = new string[] { "Name", "Summary" };
+			bool isType = typeof(R) == typeof(Type);
+			string[] cols = null;
+			string[] alignment = null;
+			if (isType)
+			{
+				cols = new string[] { "Name", "Summary" };
+				alignment = new string[] { ":-", ":-" };
+			}
+			else
+			{
+				cols = new string[] { "Returns", "Name", "Summary" };
+				alignment = new string[] { ":-:", ":-", ":-" };
+			}
 
 			List<List<string>> rows = new();
 			foreach (T item in data.OrderBy(a => a.Name))
 			{
+				List<string> elements = new List<string>();
+
+				if (!isType)
+				{
+					var t = item.ReflectionInfo.GetReturningType();
+					elements.Add($"`{t.GetMemberName()}`");
+				}
+
 				string name = string.Empty;
 				if (createSubpages)
 				{
@@ -100,16 +123,15 @@ namespace NetDocGen.Pages
 					name = item.Name;
 				}
 
-				rows.Add(new List<string>()
-				{
-					name,
-					item.Summary
-				});
+				elements.Add(name);
+				elements.Add(item.Summary);
+
+				rows.Add(elements);
 			}
 
 			builder.Table(
 				cols,
-				alignment: new string[] { ":-", ":-" },
+				alignment: alignment,
 				items: rows);
 		}
 	}
