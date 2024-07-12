@@ -1,11 +1,23 @@
 ﻿using MockAssembly;
 using NetDocGen.Extensions;
 using System.Reflection;
+using System.Text;
 
 namespace NetDocGen.Tests.Extensions
 {
 	public class ReflectionExtensionsTests
 	{
+		[Fact]
+		public void GetTypeSignature()
+		{
+			var t = typeof(MockClass);
+			string signature = t.GetSignature();
+
+			Assert.NotNull(signature);
+
+			Assert.Equal("public class MockClass", signature);
+		}
+
 		[Fact]
 		public void GetConstructorName()
 		{
@@ -54,11 +66,11 @@ namespace NetDocGen.Tests.Extensions
 			var m = typeof(MockClass).GetMethod(nameof(MockClass.Hello), new Type[] { });
 
 			Assert.NotNull(m);
-			
+
 			string name = m.GetMethodName();
 			string fullname = m.GetMethodFullName();
 
-						Assert.Equal("Hello", name);
+			Assert.Equal("Hello", name);
 			Assert.Equal("MockAssembly.MockClass.Hello", fullname);
 		}
 
@@ -68,7 +80,7 @@ namespace NetDocGen.Tests.Extensions
 			var m = typeof(MockClass).GetMethod(nameof(MockClass.Hello), new Type[] { typeof(string) });
 
 			Assert.NotNull(m);
-			
+
 			string name = m.GetMethodName();
 			string fullname = m.GetMethodFullName();
 

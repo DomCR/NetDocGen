@@ -1,5 +1,4 @@
-﻿using System.CodeDom;
-using System.CodeDom.Compiler;
+﻿using System.ComponentModel;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -12,37 +11,48 @@ namespace NetDocGen.Extensions
 	public static class ReflectionExtensions
 	{
 		public const string ConstructorNameID = "ctor";
+		public const string VisibilityPublic = "public";
+		public const string VisibilityProtectedInternal = "protected internal";
+		public const string VisibilityProtected = "protected";
+		public const string VisibilityInternal = "internal";
+		public const string VisibilityPrivate = "private";
 
-		public static string GetTypeDefinition(this Type type)
+		public static string GetSignature(this MemberInfo member)
 		{
-			string protection = string.Empty;
-			if (type.IsPublic)
+			StringBuilder str = new StringBuilder();
+
+			foreach (string att in getRellevantAttributes(member))
 			{
-				protection = "public";
+				str.AppendLine(att);
 			}
 
-			string t = string.Empty;
-			if (type.IsClass)
-			{
-				t = "class";
-			}
+			str.Append(getVisibility(member));
+			str.Append(" ");
 
-			return $"{protection} {t} {type.Name}";
+			str.AppendJoin(" ", getQualifiers(member));
+
+			str.AppendJoin(" ", getKind(member));
+
+			str.Append(member.GetMemberName());
+			
+			return str.ToString();
 		}
-
+		
 		public static string GetMemberName<T>(this T member)
 			where T : MemberInfo
 		{
 			switch (member)
 			{
-				case Type type:
-					return type.Name;
-				case PropertyInfo property:
-					return property.Name;
-				case MethodBase methodBase:
-					return methodBase.GetMethodName();
 				case EventInfo eventInfo:
 					throw new NotImplementedException();
+				case FieldInfo field:
+					return field.Name;
+				case MethodBase methodBase:
+					return methodBase.GetMethodName();
+				case PropertyInfo property:
+					return property.Name;
+				case Type type:
+					return type.Name;
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -53,14 +63,16 @@ namespace NetDocGen.Extensions
 		{
 			switch (member)
 			{
-				case Type type:
-					return type.FullName;
-				case PropertyInfo property:
-					return property.GetPropertyFullName();
-				case MethodBase methodBase:
-					return methodBase.GetMethodFullName();
 				case EventInfo eventInfo:
 					throw new NotImplementedException();
+				case FieldInfo field:
+					throw new NotImplementedException();
+				case MethodBase methodBase:
+					return methodBase.GetMethodFullName();
+				case PropertyInfo property:
+					return property.GetPropertyFullName();
+				case Type type:
+					return type.FullName;
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -206,7 +218,11 @@ namespace NetDocGen.Extensions
 		private static string explicitImplicitPostfix(MethodBase methodInfo)
 		{
 			if (!methodInfo.IsSpecialName ||
-				(methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit")) return string.Empty;
+				(methodInfo.Name != "op_Explicit" && methodInfo.Name != "op_Implicit"))
+			{
+				return string.Empty;
+			}
+
 			return "~" + getTypeId((methodInfo as MethodInfo).ReturnType);
 		}
 
@@ -217,9 +233,313 @@ namespace NetDocGen.Extensions
 				: Array.Empty<string>();
 		}
 
-		private static string genericParamPrefix(Type type, string[] genericClassParams)
+		private static IEnumerable<string> getRellevantAttributes(MemberInfo member)
 		{
-			return (genericClassParams != null && genericClassParams.Contains(type.Name)) ? "`" : "``";
+			var obsoleteAttribute = member.GetCustomAttribute<ObsoleteAttribute>();
+			if (obsoleteAttribute != null)
+			{
+				var message = obsoleteAttribute.Message;
+				if (string.IsNullOrWhiteSpace(message))
+				{
+					yield return "[Obsolete]";
+				}
+				else
+				{
+					yield return $"[Obsolete({message})]";
+				}
+			}
+
+			var browsableAttribute = member.GetCustomAttribute<EditorBrowsableAttribute>();
+			if (browsableAttribute != null && browsableAttribute.State != EditorBrowsableState.Always)
+			{
+				yield return $"[EditorBrowsable({browsableAttribute.State})]";
+			}
+
+			var attributeUsage = member.GetCustomAttribute<AttributeUsageAttribute>();
+			if (attributeUsage != null)
+			{
+				string attusage = $"[AttributeUsage({attributeUsage.ValidOn})";
+
+				if (!attributeUsage.Inherited)
+				{
+					attusage += ", Inherited = false";
+				}
+
+				if (attributeUsage.AllowMultiple)
+				{
+					attusage += ", AllowMultiple = true";
+				}
+
+				attusage += ")]";
+				yield return attusage;
+			}
+
+			if (member is TypeInfo typeInfo && typeInfo.IsEnum && typeInfo.GetCustomAttributes<FlagsAttribute>().Any())
+			{
+				yield return "[Flags]";
+			}
+		}
+
+		private static string getVisibility(MemberInfo member)
+		{
+			switch (member)
+			{
+				case EventInfo eventInfo:
+					return getMethodVisibility(eventInfo.AddMethod);
+				case FieldInfo fieldInfo:
+					return getFieldVisibility(fieldInfo);
+				case MethodBase methodBase:
+					return getMethodVisibility(methodBase);
+				case PropertyInfo propertyInfo:
+					return getPropertyVisibility(propertyInfo);
+				case TypeInfo type:
+					return getTypeVisibility(type);
+				default:
+					return string.Empty;
+			}
+		}
+
+		private static string getTypeVisibility(TypeInfo typeInfo)
+		{
+			if (typeInfo.IsPublic || typeInfo.IsNestedPublic)
+			{
+				return VisibilityPublic;
+			}
+
+			if (typeInfo.IsNestedFamORAssem)
+			{
+				return VisibilityProtectedInternal;
+			}
+
+			if (typeInfo.IsNestedFamily)
+			{
+				return VisibilityProtected;
+			}
+
+			if (typeInfo.IsNestedAssembly || typeInfo.IsNestedFamANDAssem)
+			{
+				return VisibilityInternal;
+			}
+
+			return VisibilityPrivate;
+		}
+
+		private static string getMethodVisibility(MethodBase methodBase)
+		{
+			if (methodBase.IsPublic)
+			{
+				return VisibilityPublic;
+			}
+
+			if (methodBase.IsFamilyOrAssembly)
+			{
+				return VisibilityProtectedInternal;
+			}
+
+			if (methodBase.IsFamily)
+			{
+				return VisibilityProtected;
+			}
+
+			if (methodBase.IsAssembly || methodBase.IsFamilyAndAssembly)
+			{
+				return VisibilityInternal;
+			}
+
+			return VisibilityPrivate;
+		}
+
+		private static string getPropertyVisibility(PropertyInfo propertyInfo)
+		{
+			MethodInfo getMethod = propertyInfo.GetMethod;
+			if (getMethod == null)
+			{
+				throw new InvalidOperationException();
+			}
+
+			return getMethodVisibility(propertyInfo.GetMethod);
+		}
+
+		private static string getFieldVisibility(FieldInfo fieldInfo)
+		{
+			if (fieldInfo.IsPublic)
+			{
+				return VisibilityPublic;
+			}
+
+			if (fieldInfo.IsFamilyOrAssembly)
+			{
+				return VisibilityProtectedInternal;
+			}
+
+			if (fieldInfo.IsFamily)
+			{
+				return VisibilityProtected;
+			}
+
+			if (fieldInfo.IsAssembly || fieldInfo.IsFamilyAndAssembly)
+			{
+				return VisibilityInternal;
+			}
+
+			return VisibilityPrivate;
+		}
+
+		private static IEnumerable<string> getQualifiers(MemberInfo memberInfo)
+		{
+			if (isStatic(memberInfo))
+				yield return "static";
+			else if (memberInfo is Type t && t.IsSealed)
+				yield return "sealed";
+			else if (isAbstract(memberInfo))
+				yield return "abstract";
+			else if (isVirtual(memberInfo))
+				yield return "virtual";
+			else if (isOverride(memberInfo))
+				yield return "override";
+
+			if (isConst(memberInfo))
+				yield return "const";
+			if (isReadOnly(memberInfo))
+				yield return "readonly";
+		}
+
+		public static string getKind(MemberInfo memberInfo)
+		{
+			if (memberInfo is EventInfo)
+			{
+				return "event ";
+			}
+
+			if (memberInfo is Type t)
+			{
+				TypeInfo info = t.GetTypeInfo();
+
+				if (typeof(Delegate).GetTypeInfo().IsAssignableFrom(info))
+					return "delegate ";
+				if (isRecord(info))
+					return "record ";
+				if (info.IsClass)
+					return "class ";
+				if (info.IsInterface)
+					return "interface ";
+				if (info.IsEnum)
+					return "enum ";
+				if (info.IsValueType)
+					return "struct ";
+			}
+
+			return string.Empty;
+		}
+
+		private static bool isRecord(Type type) => type.GetMethod("<Clone>$") != null;
+
+		private static bool isStatic(MemberInfo memberInfo)
+		{
+			var typeInfo = memberInfo as TypeInfo;
+			if (typeInfo != null)
+				return typeInfo.IsClass && typeInfo.IsAbstract && typeInfo.IsSealed;
+
+			var eventInfo = memberInfo as EventInfo;
+			if (eventInfo != null)
+				return eventInfo.AddMethod.IsStatic;
+
+			var propertyInfo = memberInfo as PropertyInfo;
+			if (propertyInfo != null)
+				return (propertyInfo.GetMethod ?? propertyInfo.SetMethod)?.IsStatic ?? false;
+
+			var fieldInfo = memberInfo as FieldInfo;
+			if (fieldInfo != null)
+				return fieldInfo.IsStatic && !fieldInfo.IsLiteral;
+
+			var methodBase = memberInfo as MethodBase;
+			if (methodBase != null)
+				return methodBase.IsStatic;
+
+			return false;
+		}
+
+		private static bool isAbstract(MemberInfo memberInfo)
+		{
+			var typeInfo = memberInfo as TypeInfo;
+			if (typeInfo != null && !typeInfo.IsInterface)
+				return typeInfo.IsAbstract;
+
+			if (memberInfo.DeclaringType?.GetTypeInfo().IsInterface == true)
+				return false;
+
+			var eventInfo = memberInfo as EventInfo;
+			if (eventInfo != null)
+				return eventInfo.AddMethod != null && isAbstract(eventInfo.AddMethod);
+
+			var propertyInfo = memberInfo as PropertyInfo;
+			if (propertyInfo != null)
+			{
+				return (propertyInfo.GetMethod != null && isAbstract(propertyInfo.GetMethod)) ||
+					(propertyInfo.SetMethod != null && isAbstract(propertyInfo.SetMethod));
+			}
+
+			var methodBase = memberInfo as MethodBase;
+			if (methodBase != null)
+				return methodBase.IsAbstract;
+
+			return false;
+		}
+
+		private static bool isVirtual(MemberInfo memberInfo)
+		{
+			if (memberInfo.DeclaringType?.GetTypeInfo().IsInterface == true)
+				return false;
+
+			var eventInfo = memberInfo as EventInfo;
+			if (eventInfo != null)
+				return eventInfo.AddMethod != null && isVirtual(eventInfo.AddMethod);
+
+			var propertyInfo = memberInfo as PropertyInfo;
+			if (propertyInfo != null)
+			{
+				return (propertyInfo.GetMethod != null && isVirtual(propertyInfo.GetMethod)) ||
+					(propertyInfo.SetMethod != null && isVirtual(propertyInfo.SetMethod));
+			}
+
+			var methodInfo = memberInfo as MethodInfo;
+			if (methodInfo != null)
+				return methodInfo.IsVirtual && !methodInfo.IsFinal && methodInfo.GetRuntimeBaseDefinition().DeclaringType == methodInfo.DeclaringType;
+
+			return false;
+		}
+
+		private static bool isOverride(MemberInfo memberInfo)
+		{
+			if (memberInfo.DeclaringType?.GetTypeInfo().IsInterface == true)
+				return false;
+
+			var eventInfo = memberInfo as EventInfo;
+			if (eventInfo != null)
+				return eventInfo.AddMethod != null && isOverride(eventInfo.AddMethod);
+
+			var propertyInfo = memberInfo as PropertyInfo;
+			if (propertyInfo != null)
+			{
+				return (propertyInfo.GetMethod != null && isOverride(propertyInfo.GetMethod)) ||
+					(propertyInfo.SetMethod != null && isOverride(propertyInfo.SetMethod));
+			}
+
+			var methodInfo = memberInfo as MethodInfo;
+			if (methodInfo != null)
+				return methodInfo.IsVirtual && !methodInfo.IsFinal && methodInfo.GetRuntimeBaseDefinition().DeclaringType != methodInfo.DeclaringType;
+
+			return false;
+		}
+
+		private static bool isConst(MemberInfo memberInfo)
+		{
+			return (memberInfo as FieldInfo)?.IsLiteral ?? false;
+		}
+
+		private static bool isReadOnly(MemberInfo memberInfo)
+		{
+			return (memberInfo as FieldInfo)?.IsInitOnly ?? false;
 		}
 	}
 }

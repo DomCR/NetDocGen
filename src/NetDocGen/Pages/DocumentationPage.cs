@@ -115,7 +115,7 @@ namespace NetDocGen.Pages
 	}
 
 	public abstract class DocumentationPage<T> : DocumentationPage
-	where T : CommonDocumentation
+		where T : CommonDocumentation
 	{
 		protected override string fileName { get { return PathUtils.ToLink(this._documentation.FullName); } }
 
@@ -124,6 +124,11 @@ namespace NetDocGen.Pages
 		protected DocumentationPage(string outputFolder, T documentation) : base(outputFolder)
 		{
 			this._documentation = documentation;
+		}
+
+		protected virtual void writeDefinition()
+		{
+			builder.Header(2, "Definition");
 		}
 	}
 }
