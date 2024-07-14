@@ -147,10 +147,5 @@ namespace NetDocGen.Pages
 		{
 			this._documentation = documentation;
 		}
-
-		protected virtual void writeDefinition()
-		{
-			builder.Header(2, "Definition");
-		}
 	}
 }

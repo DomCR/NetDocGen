@@ -31,4 +31,8 @@
 		<ProjectReference Include="..\NetDocGen\NetDocGen.csproj" />
 	</ItemGroup>
 
+	<Target Name="CreateTool" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+		<Exec Command="dotnet pack --no-build --no-restore"/>
+	</Target>
+
 </Project>

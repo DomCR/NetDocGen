@@ -38,6 +38,12 @@ namespace NetDocGen.Extensions
 
 			str.AppendJoin(" ", member.GetMemberName());
 
+			if (member is PropertyInfo propertyInfo)
+			{
+				str.Append(" ");
+				str.AppendJoin(" ", getPropertyGetSet(propertyInfo));
+			}
+
 			return str.ToString();
 		}
 
@@ -179,7 +185,7 @@ namespace NetDocGen.Extensions
 					isMethodParameter: true,
 					genericClassParams))
 				.ToList();
-			return (parameterStrings.Count > 0) ? $"({string.Join(",", parameterStrings)})" : string.Empty;
+			return (parameterStrings.Count > 0) ? $"({string.Join(", ", parameterStrings)})" : string.Empty;
 		}
 
 		private static string getTypeId(Type type, bool isOut = false, bool isMethodParameter = false, string[] genericClassParams = null)
@@ -579,6 +585,49 @@ namespace NetDocGen.Extensions
 		{
 			return (memberInfo as FieldInfo)?.IsInitOnly ?? false;
 		}
+
+		private static string getPropertyGetSet(PropertyInfo propertyInfo)
+		{
+			var getMethod = propertyInfo.GetMethod;
+			var setMethod = propertyInfo.SetMethod;
+			if (getMethod == null && setMethod == null)
+				throw new InvalidOperationException();
+
+			if (getMethod != null && setMethod == null)
+			{
+				return "{ get; }";
+			}
+
+			if (getMethod == null)
+			{
+				return "{ set; }";
+			}
+
+			var getVisibility = getMethodVisibility(getMethod);
+			var setVisibility = getMethodVisibility(setMethod);
+
+			List<string> pars = new List<string>();
+			pars.Add("{");
+			if (getVisibility != VisibilityPublic)
+			{
+				pars.Add(getVisibility);
+			}
+			pars.Add("get;");
+
+			if (setVisibility != VisibilityPublic)
+			{
+				pars.Add(setVisibility);
+			}
+			pars.Add("set;");
+			pars.Add("}");
+
+
+			StringBuilder str = new StringBuilder();
+			str.AppendJoin(' ', pars);
+
+			return str.ToString(); ;
+		}
+
 	}
 }
 

@@ -4,7 +4,10 @@
 	{
 		public static string ToLink(string name)
 		{
-			return string.Join("_", name.Split(Path.GetInvalidFileNameChars()));
+			return string.Join("_", name
+				.Split(Path.GetInvalidFileNameChars()
+				.Concat(new char[] { ' ' })
+				.ToArray()));
 		}
 	}
 }

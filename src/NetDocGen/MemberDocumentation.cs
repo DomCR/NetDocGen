@@ -3,7 +3,14 @@ using System.Reflection;
 
 namespace NetDocGen
 {
-	public abstract class MemberDocumentation<T, R> : CommonDocumentation, IMemberDocumentation<T>
+	public abstract class MemberDocumentation : CommonDocumentation
+	{
+		public abstract CommonDocumentation GetOwner();
+
+		public abstract MemberInfo GetMemberInfo();
+	}
+
+	public abstract class MemberDocumentation<T, R> : MemberDocumentation, IMemberDocumentation<T>
 		where T : MemberInfo
 		where R : CommonDocumentation
 	{
@@ -38,6 +45,16 @@ namespace NetDocGen
 		public override AssemblyDocumentation GetRoot()
 		{
 			return this.Owner?.GetRoot();
+		}
+
+		public override CommonDocumentation GetOwner()
+		{
+			return Owner;
+		}
+
+		public override MemberInfo GetMemberInfo()
+		{
+			return ReflectionInfo;
 		}
 	}
 }

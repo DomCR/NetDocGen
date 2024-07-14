@@ -109,8 +109,8 @@ namespace NetDocGen.Tests.Extensions
 			string name = m.GetMethodName();
 			string fullname = m.GetMethodFullName();
 
-			Assert.Equal("Hello(System.String,System.String)", name);
-			Assert.Equal("MockAssembly.MockClass.Hello(System.String,System.String)", fullname);
+			Assert.Equal("Hello(System.String, System.String)", name);
+			Assert.Equal("MockAssembly.MockClass.Hello(System.String, System.String)", fullname);
 		}
 
 		[Fact]
