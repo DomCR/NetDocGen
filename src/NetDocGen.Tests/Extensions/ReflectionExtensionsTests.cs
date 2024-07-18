@@ -19,6 +19,17 @@ namespace NetDocGen.Tests.Extensions
 		}
 
 		[Fact]
+		public void GetTypeFullName()
+		{
+			var t = typeof(MockClassWithGeneric<string>);
+			string name = t.GetMemberFullName();
+
+			Assert.NotNull(name);
+
+			Assert.Equal("MockAssembly.MockClassWithGeneric<String>", name);
+		}
+
+		[Fact]
 		public void GetTypeSignature()
 		{
 			var t = typeof(MockClass);

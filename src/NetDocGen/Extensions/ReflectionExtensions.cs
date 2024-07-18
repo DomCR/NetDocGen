@@ -99,7 +99,7 @@ namespace NetDocGen.Extensions
 				case PropertyInfo property:
 					return property.GetPropertyFullName();
 				case Type type:
-					return type.FullName;
+					return $"{type.Namespace}.{type.GetTypeName()}";
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -186,11 +186,6 @@ namespace NetDocGen.Extensions
 					genericClassParams))
 				.ToList();
 			return (parameterStrings.Count > 0) ? $"({string.Join(", ", parameterStrings)})" : string.Empty;
-		}
-
-		public static bool IsNullable(this Type type)
-		{
-			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 		}
 
 		public static string GetTypeName(this Type type)
@@ -286,7 +281,8 @@ namespace NetDocGen.Extensions
 					string.Join(",", Enumerable.Repeat("0:", lastIndex - index)) +
 					fullTypeName.Substring(lastIndex);
 			}
-			return fullTypeName;
+
+			return fullTypeName.cleanGenericTypeName();
 		}
 
 		private static bool isIndexerProperty(MethodBase methodInfo)
