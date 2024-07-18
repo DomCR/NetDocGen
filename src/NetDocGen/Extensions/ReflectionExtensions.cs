@@ -79,7 +79,7 @@ namespace NetDocGen.Extensions
 				case PropertyInfo property:
 					return property.Name;
 				case Type type:
-					return type.Name;
+					return type.GetTypeName();
 				default:
 					throw new NotSupportedException($"{member.GetType().FullName} not supported");
 			}
@@ -188,6 +188,58 @@ namespace NetDocGen.Extensions
 			return (parameterStrings.Count > 0) ? $"({string.Join(", ", parameterStrings)})" : string.Empty;
 		}
 
+		public static bool IsNullable(this Type type)
+		{
+			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+		}
+
+		public static string GetTypeName(this Type type)
+		{
+			string name = string.Empty;
+
+			if (type.IsByRef)
+			{
+				return $"ref {type.GetElementType().GetTypeName()}";
+			}
+
+			if (type.IsGenericType)
+			{
+				if (type.Name.Contains('`'))
+				{
+					var clean = type.Name.cleanGenericTypeName();
+
+					var gen = type.GetGenericArguments();
+
+					name = clean + "<" +
+						string.Join(", ", type.GetGenericArguments()
+						   .Select(argType => argType.GetTypeName())) + ">";
+				}
+				else
+				{
+					name = type.Name;
+				}
+			}
+			else if (type.IsArray)
+			{
+				name = type.GetElementType().GetTypeName() +
+					   "[" +
+					   (type.GetArrayRank() > 1 ? new string(',', type.GetArrayRank() - 1) : string.Empty) +
+					   "]";
+			}
+			else
+			{
+				name = type.Name;
+			}
+
+			return name;
+		}
+
+		private static string cleanGenericTypeName(this string genericTypeName)
+		{
+			var index = genericTypeName.IndexOf('`');
+			return (index < 0) ? genericTypeName : genericTypeName.Substring(0, index);
+		}
+
 		private static string getTypeId(Type type, bool isOut = false, bool isMethodParameter = false, string[] genericClassParams = null)
 		{
 			if (type.IsGenericParameter)
@@ -262,6 +314,11 @@ namespace NetDocGen.Extensions
 
 		private static IEnumerable<string> getRellevantAttributes(MemberInfo member)
 		{
+			foreach (Attribute att in member.GetCustomAttributes())
+			{
+				yield return att.GetType().GetTypeName();
+			}
+
 			var obsoleteAttribute = member.GetCustomAttribute<ObsoleteAttribute>();
 			if (obsoleteAttribute != null)
 			{
@@ -459,7 +516,7 @@ namespace NetDocGen.Extensions
 			return string.Empty;
 		}
 
-		public static string getReturningType(MemberInfo member)
+		private static string getReturningType(MemberInfo member)
 		{
 			switch (member)
 			{

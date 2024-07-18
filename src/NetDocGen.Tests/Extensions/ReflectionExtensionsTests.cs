@@ -8,6 +8,17 @@ namespace NetDocGen.Tests.Extensions
 	public class ReflectionExtensionsTests
 	{
 		[Fact]
+		public void GetTypeName()
+		{
+			var t = typeof(MockClassWithGeneric<string>);
+			string name = t.GetMemberName();
+
+			Assert.NotNull(name);
+
+			Assert.Equal("MockClassWithGeneric<String>", name);
+		}
+
+		[Fact]
 		public void GetTypeSignature()
 		{
 			var t = typeof(MockClass);
