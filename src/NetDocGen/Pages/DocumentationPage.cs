@@ -8,11 +8,11 @@ namespace NetDocGen.Pages
 {
 	public abstract class DocumentationPage
 	{
+		public abstract string Title { get; }
+
+		protected abstract string FileName { get; }
+
 		public string OutputFolder { get; protected set; }
-
-		protected abstract string title { get; }
-
-		protected abstract string fileName { get; }
 
 		protected readonly MarkdownFileBuilder builder;
 
@@ -36,7 +36,7 @@ namespace NetDocGen.Pages
 		{
 			this.builder.Clear();
 
-			this.builder.Header(1, this.title);
+			this.builder.Header(1, this.Title);
 
 			this.build();
 
@@ -65,11 +65,11 @@ namespace NetDocGen.Pages
 
 		protected virtual string createFilePath()
 		{
-			string file = this.fileName;
+			string file = this.FileName;
 
 			if (Path.GetExtension(file) != "md")
 			{
-				file = $"{fileName}.md";
+				file = $"{FileName}.md";
 			}
 
 			return Path.Combine(OutputFolder, file);
@@ -129,7 +129,7 @@ namespace NetDocGen.Pages
 				rows.Add(elements);
 			}
 
-			builder.Table(
+			this.builder.Table(
 				cols,
 				alignment: alignment,
 				items: rows);
@@ -139,7 +139,7 @@ namespace NetDocGen.Pages
 	public abstract class DocumentationPage<T> : DocumentationPage
 		where T : CommonDocumentation
 	{
-		protected override string fileName { get { return PathUtils.ToLink(this._documentation.FullName); } }
+		protected override string FileName { get { return PathUtils.ToLink(this._documentation.FullName); } }
 
 		protected readonly T _documentation;
 
