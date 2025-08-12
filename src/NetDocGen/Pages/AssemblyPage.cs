@@ -2,7 +2,7 @@
 {
 	public class AssemblyPage : DocumentationPage<AssemblyDocumentation>
 	{
-		protected override string Title { get { return this._documentation.Name; } }
+		public override string Title { get { return this._documentation.Name; } }
 
 		protected override string FileName { get { return "Home"; } }
 

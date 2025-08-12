@@ -2,7 +2,7 @@
 {
 	public class NamespacePage : DocumentationPage<NamespaceDocumentation>
 	{
-		protected override string Title { get { return $"{this._documentation.FullName} Namespace"; } }
+		public override string Title { get { return $"{this._documentation.FullName} Namespace"; } }
 
 		public NamespacePage(string outputFolder, NamespaceDocumentation documentation) : base(outputFolder, documentation)
 		{

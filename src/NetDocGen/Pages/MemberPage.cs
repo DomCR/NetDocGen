@@ -9,7 +9,7 @@ namespace NetDocGen.Pages
 	{
 		protected abstract string memberName { get; }
 
-		protected override string Title { get { return $"{this._documentation.Name} {memberName}"; } }
+		public override string Title { get { return $"{this._documentation.Name} {memberName}"; } }
 
 		protected MemberPage(string outputFolder, T documentation) : base(outputFolder, documentation)
 		{

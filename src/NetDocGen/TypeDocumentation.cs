@@ -73,6 +73,12 @@ namespace NetDocGen
 														| BindingFlags.Instance
 														| BindingFlags.DeclaredOnly))
 			{
+				if (p.GetIndexParameters().Length > 0)
+				{
+					//Ignore indexers
+					continue;
+				}
+
 				PropertyDocumentation pdoc = new PropertyDocumentation(p, this);
 				this._properties.Add(pdoc.Name, pdoc);
 			}
