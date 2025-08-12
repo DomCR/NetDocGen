@@ -8,9 +8,9 @@ namespace NetDocGen.Runner.Commands
 	[Command(Name = "netdocgen", Description = "")]
 	public class MarkdownWikiCommand : CommandBase
 	{
-		private readonly IMarkDownWikiGenerator _generator;
+		private readonly IMarkdownWikiGenerator _generator;
 
-		public MarkdownWikiCommand(IMarkDownWikiGenerator generator)
+		public MarkdownWikiCommand(IMarkdownWikiGenerator generator)
 		{
 			this._generator = generator;
 		}
